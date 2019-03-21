@@ -33,20 +33,20 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 - **Usage:   scIGAN in.matrix.txt [options]**
 
 - **Options:**
-        - `-h --help`      Show this usage message. 
-    - input:
+    -- `-h --help`      Show this usage message. 
+    - *Input:*
         - `in.matrix.txt`   A tab-delimited text file, containing the expression counts matrix with genes in 
                          rows and cells in columns. The  first row is header and first column is gene IDs
                          or names. \<required> 
         - `-l --label_file` \[STR]  A text file contain the labels (cell types, subpopulations), 
                                 each per line with the same order in in.matrix.txt. \<optional> 
                                 Default: scIGANs will learn the subpopulations using Spectral clustering.
-    - training:
+    - *Training:*
         - `-n --n_epochs`   \[STR]   The number of epochs to train the GANs. \<optional> Default: 200
         - `-p --process`    \[STR]   Number of threads to run scIGANs. \<optional> Default: 20
-    - imputing:
+    - *Imputing:*
         - `-s --sim_szie`   \[INT]   Number of generated datasets for imputing. \<optional> Default: 200
         - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<optional> Default: 10
-    - Output:
+    - *Output:*
          - `-o --outdir`     \[STR]   output directory. \<optional> Default: current working directory
 
