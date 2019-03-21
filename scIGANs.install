@@ -10,7 +10,6 @@ do
 	esac
 done
 mkdir -p $path/scIGANs${version}/
-echo 'scIGANs was installed in '${path}/scIGANs${version}/
 cp -r src $path/scIGANs${version}/
 cp scIGANs $path/scIGANs${version}/
 chmod +x $path/scIGANs${version}/scIGANs
@@ -23,4 +22,5 @@ else
 fi
 export PATH=${path}/scIGANs/:$PATH
 source ~/.bashrc
+echo 'scIGANs was installed in '${path}/scIGANs${version}/
 
