@@ -50,7 +50,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
         - `-s --sim_szie`   \[INT]   Number of generated datasets for imputing. \<optional> Default: 200
         - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<optional> Default: 10
     - *Output:*
-         - `-o --outdir`     \[STR]   output directory. \<optional> Default: current working directory
+         - `-o --outdir`    \[STR]   output directory. \<optional> Default: current working directory
 ## <a name="contact"></a>Contact
 Yungang Xu yungang.xu@uth.tmc.edu
 
