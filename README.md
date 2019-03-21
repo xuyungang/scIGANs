@@ -30,7 +30,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
  ## <a name="run"></a>Run scIGNAs
  ### <a name="cmd"></a>Commands and options
 
-- **Usage:   scIGAN in.matrix.txt [options]**
+- **Usage:** `scIGAN in.matrix.txt [options]`
 
 - **Options:**
 
