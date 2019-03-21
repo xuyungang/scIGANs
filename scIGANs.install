@@ -1,0 +1,24 @@
+#!/bin/bash
+path=`pwd`
+version='0.1.1'
+while getopts "p:" arg;
+do
+	case $arg in
+	  p)
+	    path=${OPTARG}
+	    ;;
+	esac
+done
+mkdir -p $path/scIGANs${version}/
+echo 'scIGANs was installed in '${path}/scIGANs${version}/
+cp -r src $path/scIGANs${version}/
+cp scIGANs $path/scIGANs${version}/
+if [ -f ~/.bashrc ] 
+then
+  echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc 
+else
+  cp /etc/skel/.bashrc ~/
+  echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc
+fi
+export PATH=${path}/scIGANs/:$PATH
+source ~/.bashrc
