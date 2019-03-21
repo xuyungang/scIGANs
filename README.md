@@ -35,13 +35,13 @@ Usage:   scIGAN in.matrix.txt [options]
 Options:
          -h --help       Show this usage message. 
     input:
-         in.matrix.txt   A tab-delimited text file, containing the expression counts matrix with
-         genes in rows and cells in columns. The  first row is header and first column is gene IDs
-         or names. <required>        
+         in.matrix.txt   A tab-delimited text file, containing the expression counts matrix with genes in 
+                         rows and cells in columns. The  first row is header and first column is gene IDs
+                         or names. <required>        
          -l --label_file [STR]  A text file contain the labels (cell types, subpopulations), 
                                 each per line with the same order in in.matrix.txt. <optional> 
                                 Default: scIGANs will learn the subpopulations using Spectral clustering.
-     training:
+    training:
          -n --n_epochs   [STR]   The number of epochs to train the GANs. <optional> Default: 200
          -p --process    [STR]   Number of threads to run scIGANs. <optional> Default: 20
     imputing:
