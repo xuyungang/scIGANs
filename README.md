@@ -8,7 +8,7 @@ Generative adversarial networks for single-cell RNA-seq imputation
   - [Install scIGANs](#build)
 - [Run scIGANs](#run)
   - [Commends and Options](#cmd)
-  
+- [Contact](#contac)
 ## <a name="introduction"></a>Introduction
 scIGANs is ...
 ## <a name="install"></a>Installation
@@ -16,14 +16,14 @@ scIGANs is ...
 scIGANs currently can only be built and run on Linux/Unix systems.
 ### <a name="depend"></a>Install dependences
 scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python` (>2.7) and `R`(>3.5) before run scIGANs.
-- **R packages:**  scIGANs will automatically install dependent packages. To make sure you have the permission to install R packages to the lib.
+- **R packages:**  scIGANs will automatically install dependent packages. Make sure you have the permission to install R packages to the default lib.
 - **python modules:** `pytorch`, `numpy`, `pandas`, `torchvision`, and `joblib` are required for scIGANS.
 ### <a name="build"></a>Install scIGANs
-- **download** `git clone https://github.com/xuyungang/scIGANs0.1.1.git`
+- **Download** `git clone https://github.com/xuyungang/scIGANs0.1.1.git`
 - `cd scIGANs0.1.1`
-- **install** `bash scIGANs.install [-p dir/to/install]`
+- **Install** `bash scIGANs.install [-p dir/to/install]`
   - use `-p` option to direct the installation to a sepecific directory; default, current working directory.
-- **check installation** `scIGANs -h`
+- **Check installation** `scIGANs -h`
   - For successful installation, you will see the help message.
   - Occasionally, you may need to restart you terminal to run **`scIGANs`**.
 
@@ -50,4 +50,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
         - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<optional> Default: 10
     - *Output:*
          - `-o --outdir`     \[STR]   output directory. \<optional> Default: current working directory
+## <a name="contact"></a>Contact
+Yungang Xu yungang.xu@uth.tmc.edu
 
+Xiaobo Zhou xiaobo.zhou@uth.tmc.edu
