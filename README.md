@@ -9,6 +9,7 @@ Generative adversarial networks for single-cell RNA-seq imputation
 - [Run scIGANs](#run)
   - [Commends and Options](#cmd)
 - [Contact](#contac)
+- [Comments and Bugs](#issue)
 ## <a name="introduction"></a>Introduction
 scIGANs is ...
 ## <a name="install"></a>Installation
@@ -54,3 +55,5 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 Yungang Xu yungang.xu@uth.tmc.edu
 
 Xiaobo Zhou xiaobo.zhou@uth.tmc.edu
+### <a name="issue"></a>Comment and bug report
+[github issues](https://github.com/xuyungang/scIGANs0.1.1/issues)
