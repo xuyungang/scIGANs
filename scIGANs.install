@@ -20,7 +20,7 @@ else
   cp /etc/skel/.bashrc ~/
   echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc
 fi
-export PATH=${path}/scIGANs/:$PATH
+export PATH=${path}/scIGANs${version}/:$PATH
 source ~/.bashrc
 echo 'scIGANs was installed in '${path}/scIGANs${version}/
 
