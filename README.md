@@ -11,8 +11,9 @@ Generative adversarial networks for single-cell RNA-seq imputation
   - [Run with test data](#test)
 - [Contact](#contac)
 - [Comments and Bugs](#issue)
+- [Citation](#cite)
 ## <a name="introduction"></a>Introduction
-scIGANs is ...
+scIGANs is a computational tool for single-cell RNA-seq imputation and denoise using Generative Adversarial Networks (GANs).
 ## <a name="install"></a>Installation
 ### <a name="os"></a>Operating system
 scIGANs currently can only be built and run on Linux/Unix systems.
@@ -60,3 +61,6 @@ Yungang Xu yungang.xu@uth.tmc.edu
 Xiaobo Zhou xiaobo.zhou@uth.tmc.edu
 ### <a name="issue"></a>Comment and bug report
 [github issues](https://github.com/xuyungang/scIGANs0.1.1/issues)
+### <a name="cite"></a>Citation
+Yungang Xu, Zhigang Zhang, Lei You, Jiajia Liu, Xiaobo Zhou. (2019) **scIGANs: Generative adversarial networks for 
+single-cell RNA-seq imputation.** In preparation. 
