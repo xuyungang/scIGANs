@@ -13,6 +13,7 @@ mkdir -p $path/scIGANs${version}/
 echo 'scIGANs was installed in '${path}/scIGANs${version}/
 cp -r src $path/scIGANs${version}/
 cp scIGANs $path/scIGANs${version}/
+chmod +x $path/scIGANs${version}/scIGANs
 if [ -f ~/.bashrc ] 
 then
   echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc 
