@@ -6,9 +6,9 @@ knn_k=10 # number of the neighbours used for imputation
 label="" # file path for cell labels
 process=20
 PARAMS=""
-e_matrix=$1 ## the first argument is the input expression matrix
+#e_matrix=$1 ## the first argument is the input expression matrix
 
-outdir=$(dirname $e_matrix)
+outdir=`pwd`
 
 version="0.1.1"
 while (( "$#" )); do
@@ -46,7 +46,7 @@ while (( "$#" )); do
 	echo "-s | --sim_size <integer>		set the number of generated data for imputation. Default = 200"
 	echo "-k | --knn_k <integer>		set the number of nearest neighbours used for imputation. Default = 10"
 	echo "-p | --process <integer>		number of cpu threads. Default = 20"
-	echo "-o | --outdir <string>		set the path where to write the imputed matrix. Default: same directory with the input matrix."
+	echo "-o | --outdir <string>		set the path where to write the imputed matrix. Default: current working directory (pwd)."
     shift
 	exit
       ;;
@@ -66,7 +66,7 @@ while (( "$#" )); do
 done
 # set positional arguments in their proper place
 eval set -- "$PARAMS"
-#e_matrix=$(awk -v OFS=" "  '{print $1}' <<< $PARAMS)
+e_matrix=$(awk -v OFS=" "  '{print $1}' <<< $PARAMS)
 set -e
 # create a tmp folder for intermediate outputs
 tmp='tmp'$RANDOM
