@@ -7,6 +7,8 @@ Generative adversarial networks for single-cell RNA-seq imputation
   - [Install Dependences](#depend)
   - [Install scIGANs](#build)
 - [Run scIGANs](#run)
+  - [Commends and Options](#cmd)
+  
 ## <a name="introduction"></a>Introduction
 scIGANs is ...
 ## <a name="install"></a>Installation
@@ -26,4 +28,25 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
   - Occasionally, you may need to restart you terminal to run **`scIGANs`**.
 
  ## <a name="run"></a>Run scIGNAs
- 
+ ### <a name="cmd"></a>Commands and options
+```
+Usage:   scIGAN in.matrix.txt [options]
+
+Options:
+         -h --help       Show this usage message. 
+    input:
+         in.matrix.txt   A tab-delimited text file, containing the expression counts matrix with
+         genes in rows and cells in columns. The  first row is header and first column is gene IDs
+         or names. <required>        
+         -l --label_file [STR]  A text file contain the labels (cell types, subpopulations), 
+         each per line with the same order in in.matrix.txt. <optional> Default: scIGANs will
+         learn the subpopulations using Spectral clustering.
+     training:
+         -n --n_epochs [STR]   The number of epochs to train the GANs. <optional> Default: 200
+         -p --process  [STR]   Number of threads to run scIGANs. <optional> Default: 20
+    imputing:
+         -s --sim_szie    [INT]    Number of generated datasets for imputing. <optional> Default: 200
+         -k --knn_n  [INT]    Number of nearest neighbours for imputing. <optional> Default: 10
+    Output:
+         -o --outdir    [STR]    output directory. <optional> Default: current working directory
+```
