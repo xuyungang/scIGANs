@@ -9,7 +9,7 @@ PARAMS=""
 #e_matrix=$1 ## the first argument is the input expression matrix
 
 outdir=`pwd`
-
+Bashdir=$(dirname $BASH_SOURCE)
 version="0.1.1"
 while (( "$#" )); do
   case "$1" in
@@ -72,16 +72,16 @@ set -e
 tmp='tmp'$RANDOM
 mkdir -p $tmp
 echo "scIGANs_0.1.1"
-out=`Rscript src/inpro.R ${e_matrix} $tmp $label`
+out=`Rscript ${Bashdir}/src/inpro.R ${e_matrix} $tmp $label`
 nf=$(awk -F_ '{print $3}' <<< $out)
 ncls=$(awk -F_ '{print $4}' <<< $out)
 fname=`basename $e_matrix` ## get the filename without path
 for (( i=1; i<=$nf; i++ ))
 do
 	echo $tmp/${i}_${fname}
-	python src/imputeByGans.py --file_d=$tmp/${i}_${fname} --file_c=${e_matrix}.label.csv --ncls=$ncls --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --n_cpu=$process --train
-	python src/imputeByGans.py --file_d=$tmp/${i}_${fname} --file_c=${e_matrix}.label.csv --ncls=$ncls --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --n_cpu=$process --impute
+	python ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${i}_${fname} --file_c=${e_matrix}.label.csv --ncls=$ncls --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --n_cpu=$process --train
+	python ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${i}_${fname} --file_c=${e_matrix}.label.csv --ncls=$ncls --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --n_cpu=$process --impute
 done
 
-Rscript src/outpro.R $fname $tmp $outdir
+Rscript ${Bashdir}/src/outpro.R $fname $tmp $outdir
 rm -r $tmp
