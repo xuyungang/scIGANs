@@ -16,8 +16,12 @@ chmod +x $path/scIGANs${version}/scIGANs
 echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc
 source ~/.bashrc
 export PATH=${path}/scIGANs${version}/:$PATH
+echo ""
 echo 'scIGANs was installed in '${path}/scIGANs${version}/
 echo ""
 echo "For this change to become active, you have to open a new terminal."
 echo ""
 echo Thank you for installing scIGANs${version}!
+echo ""
+echo ""
+
