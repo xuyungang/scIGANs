@@ -2,20 +2,10 @@
 #library(Rtsne.multicore)
 #library(Rtsne)
 message("Check package: SamSPECTRAL...")
-if (!requireNamespace("BiocManager", quietly = TRUE)){
-  install.packages("BiocManager", quiet = T, repos = "https://cran.r-project.org")
-  BiocManager::install("SamSPECTRAL", version = "3.8", update = T, ask = F)
-}
 library(SamSPECTRAL)
 message("Check package: readr...")
-if(!require("readr", quietly = T)){
-  install.packages("readr", quiet = T, dependencies = T,repos = "https://cran.r-project.org")
-}
 library(readr)
 message("Check package: bootSVD...")
-if(!require("bootSVD", quietly = T)){
-  install.packages("bootSVD", quiet = T, dependencies = T,repos = "https://cran.r-project.org")
-}
 library(bootSVD)
 
 #if(!require("reticulate", quietly = T)){
@@ -73,10 +63,6 @@ set.seed(100)
 #process the label
 if(is.null(label) || is.na(label)){## if no label file provided, then run pre-cluster to generate cluster label for each cell
     ##do PCA
-  
-  if(!require("Rtsne", quietly = T)){
-    install.packages("Rtsne", quiet = T, dependencies = T,repos = "https://cran.r-project.org")
-  }
   library(Rtsne)
     Ys<-scale(t(gcm_n))
     ysvd<-fastSVD(Ys)
