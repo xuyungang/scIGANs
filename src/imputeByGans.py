@@ -20,8 +20,6 @@ from datetime import datetime
 
 if  os.path.isdir('images')!=True:
     os.makedirs('images')
-if  os.path.isdir('tmp')!=True:
-    os.makedirs('tmp')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--n_epochs', type=int, default=200, help='number of epochs of training')
