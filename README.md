@@ -51,7 +51,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 
     - `-h --help`      Show this usage message. 
     - *Input:*
-        - `in.matrix.txt`   A tab-delimited text file, containing the expression counts matrix with genes in 
+        - `in.matrix.txt`   A tab-delimited text file, containing the expression counts with genes in 
                          rows and cells in columns. The  first row is header and first column is gene IDs
                          or names. \<required> 
         - `-l --label_file` \[STR]  A text file contain the labels (cell types, subpopulations), 
