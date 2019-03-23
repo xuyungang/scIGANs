@@ -85,3 +85,4 @@ done
 
 Rscript ${Bashdir}/src/outpro.R $fname $tmp $outdir
 rm -r $tmp
+echo "Completed!!!   "$(date)
