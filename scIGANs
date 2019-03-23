@@ -69,7 +69,7 @@ eval set -- "$PARAMS"
 e_matrix=$(awk -v OFS=" "  '{print $1}' <<< $PARAMS)
 set -e
 # create a tmp folder for intermediate outputs
-tmp='tmp'$RANDOM
+tmp='tmp'$(date '+%s')
 mkdir -p $tmp
 echo "scIGANs_0.1.1"
 out=`Rscript ${Bashdir}/src/inpro.R ${e_matrix} $tmp $label`
