@@ -32,14 +32,15 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
   - If you already got conda installed, go to step `2` directly.
   - Downlowd bash installer (or find different version at https://docs.conda.io/en/latest/miniconda.html)
     - `wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
-  - Install conda
+  - Install conda (Linux for example)
     - `bash miniconda/Miniconda3-latest-Linux-x86_64.sh`
     - follow the prompted instruction to complete the installation.
   2. Create conda envirenment for scIGANs
   - `cd scIGANs0.1.1`
-  - `conda env create -f scIGANs.conda.env.yml`
+  - For Linux: `conda env create -f scIGANs.conda.env.Linux.yml`
+  - For Mac OS: `conda env create -f scIGANs.conda.env.Mac.yml`
   ####  Manually installation
-  - **R packages:**  scIGANs will automatically install dependent packages. Make sure you have the permission to install R packages to the default lib.
+  - **R packages:**  scIGANs requires two R packages: `SamSPECTRAL` and `Rtsne`. Make sure you have the permission to install R packages to the default lib.
   - **python modules:** `pytorch`, `numpy`, `pandas`, `torchvision`, and `joblib` are required for scIGANS.
 ## <a name="run"></a>Run scIGNAs
 ### <a name="cmd"></a>Commands and options
