@@ -19,6 +19,6 @@ gcm_out[,1] = genenames
 
 gcm_out[,-1]<-gcm_out[,-1]*matrix(reads_max_cell,nrow=geneCount,ncol=cellCount,byrow = T)
 outfile = paste(outdir,"/scIGANs_",file, sep = "")
-write.table(gcm_out, file=outfile, col.names = T, row.names = F, sep = "\t")
+write.table(gcm_out, file=outfile, col.names = T, row.names = F, sep = "\t", quote = F)
 message(paste("Imputed matrix:", outfile))
 message(paste("Completed!!!", Sys.time()))
