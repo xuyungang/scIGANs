@@ -39,7 +39,9 @@ while (( "$#" )); do
       ;;
     -h|--help)
 	echo "scIGANs_0.1.1"
-    echo "Usage: scIGANs exp_matrix [options]"
+    echo "Usage: scIGANs in.matrix.txt [options]"
+    	echo "in.matrix.txt A tab-delimited text file, containing the expression counts with genes in rows and cells in columns. The first row is header and first column is gene IDs or names. <required>
+"
 	echo "-h | --help		show this message"
 	echo "-l | --label_file <string>	optional	give the label of cell type or subpopulation for each cell, with the same order of the colounms in expression matrix."
 	echo "-n | --n_epochs <integer>		set the number of epochs of training. Default = 200"
