@@ -17,10 +17,6 @@ scIGANs is a computational tool for single-cell RNA-seq imputation and denoise u
 ## <a name="install"></a>Installation
 ### <a name="os"></a>Operating system
 scIGANs currently can only be built and run on Linux/Unix systems.
-### <a name="depend"></a>Install dependences
-scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python` (>2.7) and `R`(>3.5) before run scIGANs.
-- **R packages:**  scIGANs will automatically install dependent packages. Make sure you have the permission to install R packages to the default lib.
-- **python modules:** `pytorch`, `numpy`, `pandas`, `torchvision`, and `joblib` are required for scIGANS.
 ### <a name="build"></a>Install scIGANs
 - **Download** `git clone https://github.com/xuyungang/scIGANs0.1.1.git`
 - `cd scIGANs0.1.1`
@@ -29,9 +25,23 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 - **Check installation** `scIGANs -h`
   - For successful installation, you will see the help message.
   - Occasionally, you may need to restart you terminal to run **`scIGANs`**.
-
- ## <a name="run"></a>Run scIGNAs
- ### <a name="cmd"></a>Commands and options
+### <a name="depend"></a>Install dependences
+scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python` (>2.7), `R`(>3.5) and all dependencies before run scIGANs.
+#### Using conda (recommend)
+1. Install conda (>4.5)
+- If you already got conda installed, go to step `2` directly.
+- Downlowd bash installer (or find different version at https://docs.conda.io/en/latest/miniconda.html)
+`wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
+- Install conda
+`bash miniconda/Miniconda3-latest-Linux-x86_64.sh`, follow the prompted instruction to complete the installation.
+2. Create conda envirenment for scIGANs
+- `cd scIGANs0.1.1`
+- `conda env create -f scIGANs.conda.env.yml`
+####  Manually installation
+- **R packages:**  scIGANs will automatically install dependent packages. Make sure you have the permission to install R packages to the default lib.
+- **python modules:** `pytorch`, `numpy`, `pandas`, `torchvision`, and `joblib` are required for scIGANS.
+## <a name="run"></a>Run scIGNAs
+### <a name="cmd"></a>Commands and options
 
 - **Usage:** `scIGAN in.matrix.txt [options]`
 
