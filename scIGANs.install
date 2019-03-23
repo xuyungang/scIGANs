@@ -15,7 +15,7 @@ cp -r test_data $path/scIGANs${version}/
 cp scIGANs $path/scIGANs${version}/
 chmod +x $path/scIGANs${version}/scIGANs
 echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc
-source ~/.bashrc
+$(echo source ~/.bashrc)
 export PATH=${path}/scIGANs${version}/:$PATH
 echo ""
 echo 'scIGANs was installed in '${path}/scIGANs${version}/
