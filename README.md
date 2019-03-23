@@ -69,7 +69,9 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 `scIGANs scIGNAs/install/path/test_data/ercc.txt -n 1 [options]`
 ## <a name="contact"></a>Contact
 Yungang Xu yungang.xu@uth.tmc.edu
+
 Zhigang Zhang zzg@hbue.edu.cn
+
 Xiaobo Zhou xiaobo.zhou@uth.tmc.edu
 ### <a name="issue"></a>Comment and bug report
 [github issues](https://github.com/xuyungang/scIGANs0.1.1/issues)
