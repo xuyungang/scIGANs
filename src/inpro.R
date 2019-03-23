@@ -1,17 +1,6 @@
-#library(tictoc)## runtime counter
-#library(Rtsne.multicore)
-#library(Rtsne)
+
 message("Check package: SamSPECTRAL...")
 library(SamSPECTRAL)
-message("Check package: readr...")
-library(readr)
-message("Check package: bootSVD...")
-library(bootSVD)
-
-#if(!require("reticulate", quietly = T)){
-#  install.packages("reticulate", quiet = T, dependencies = T,repos = "http://cran.us.r-project.org")
-#}
-#library(reticulate)
 
 args <- commandArgs(T)
 file = args[1]
@@ -35,14 +24,14 @@ upSample <- function(matrix, rowNum){
 
 #d<-read_tsv('Merge.readsImpute.transcript.expression.txt')
 #file = 'GBMMerge.readsImpute.gene.expression.NoZero.txt'
-#file = "ercc.txt"
+#file = "../test_data/ercc.txt"
 #basename(file)
 if(!file.exists(tmp)) dir.create(tmp)
 if(is.null(file) || is.na(file)){
   stop("The tab-delimited file for expression matrix is required!!!") 
 }
-d<-read_tsv(file)
-genenames = c(d[,1])[[1]]
+d<- read.table(file, header = T, sep = "\t")
+genenames = as.character(d[,1])
 cellnames = colnames(d)
 d <- d[, -1]
 geneCount<-dim(d)[1] ## gene count
@@ -64,11 +53,9 @@ set.seed(100)
 if(is.null(label) || is.na(label)){## if no label file provided, then run pre-cluster to generate cluster label for each cell
     ##do PCA
   library(Rtsne)
-    Ys<-scale(t(gcm_n))
-    ysvd<-fastSVD(Ys)
-    pcsn<-ysvd$u*matrix(ysvd$d,nrow=dim(ysvd$u)[1],ncol=dim(ysvd$u)[2],byrow=T) ##(dim = cell*100)
+  pcsn <- prcomp(t(gcm_n))
     #full<-pcsn[,1:50]
-    tsne3 <- Rtsne(pcsn, dims = 3, theta=0.2, perplexity=30, verbose=TRUE, max_iter = 1000)
+    tsne3 <- Rtsne(pcsn$x, dims = 3, theta=0.2, perplexity=30, verbose=TRUE, max_iter = 1000)
     full<-tsne3$Y
     normal.sigma <-50
 
