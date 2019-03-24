@@ -8,6 +8,7 @@ Generative adversarial networks for single-cell RNA-seq imputation
   - [Install Dependences](#depend)
 - [Use scIGANs](#run)
   - [Commends and Options](#cmd)
+  - [Input file formate](#input)
   - [Run with test data](#test)
 - [Contact](#contac)
 - [Comments and Bugs](#issue)
@@ -65,6 +66,9 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
         - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<optional> Default: 10
     - *Output:*
          - `-o --outdir`    \[STR]   output directory. \<optional> Default: current working directory
+### <a name="input"></a>Input file format
+
+![input format](Reproducibility/scIGANs/scIGANs_input.png)
 ### <a name="test"></a>Run with test_data
 `scIGANs scIGNAs/install/path/test_data/ercc.txt -n 1 [options]`
 ## <a name="contact"></a>Contact
