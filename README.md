@@ -6,7 +6,7 @@ Generative adversarial networks for single-cell RNA-seq imputation
   - [Operating system](#os)
   - [Install scIGANs](#build)
   - [Install Dependences](#depend)
-- [Run scIGANs](#run)
+- [Use scIGANs](#run)
   - [Commends and Options](#cmd)
   - [Run with test data](#test)
 - [Contact](#contac)
@@ -18,8 +18,8 @@ scIGANs is a computational tool for single-cell RNA-seq imputation and denoise u
 ### <a name="os"></a>Operating system
 scIGANs currently can only be built and run on Linux/Unix systems.
 ### <a name="build"></a>Install scIGANs
-- **Download** `git clone https://github.com/xuyungang/scIGANs0.1.1.git`
-- `cd scIGANs0.1.1`
+- **Download** `git clone https://github.com/xuyungang/scIGANs.git`
+- `cd scIGANs`
 - **Install** `bash scIGANs.install [-p dir/to/install]`
   - use `-p` option to direct the installation to a sepecific directory; default, current working directory.
 - **Check installation** `scIGANs -h`
@@ -42,7 +42,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
   ####  Manually installation
   - **R packages:**  scIGANs requires two R packages: `SamSPECTRAL` and `Rtsne`. Make sure you have the permission to install R packages to the default lib.
   - **python modules:** `pytorch`, `numpy`, `pandas`, `torchvision`, and `joblib` are required for scIGANS.
-## <a name="run"></a>Run scIGNAs
+## <a name="run"></a>Use scIGNAs
 ### <a name="cmd"></a>Commands and options
 
 - **Usage:** `scIGAN in.matrix.txt [options]`
