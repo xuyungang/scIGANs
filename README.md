@@ -68,7 +68,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
          - `-o --outdir`    \[STR]   output directory. \<optional> Default: current working directory
 ### <a name="input"></a>Input file format
 
-![input format](Reproducibility/scIGANs/scIGANs_input.png)
+![input format](https://raw.githubusercontent.com/xuyungang/Reproducibility/master/scIGANs/scIGANs_input.png)
 ### <a name="test"></a>Run with test_data
 `scIGANs scIGNAs/install/path/test_data/ercc.txt -n 1 [options]`
 ## <a name="contact"></a>Contact
