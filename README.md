@@ -9,6 +9,7 @@ Generative adversarial networks for single-cell RNA-seq imputation
 - [Use scIGANs](#run)
   - [Commends and Options](#cmd)
   - [Input file formate](#input)
+  - [Output file](#output)
   - [Run with test data](#test)
 - [Contact](#contac)
 - [Comments and Bugs](#issue)
