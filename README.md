@@ -71,7 +71,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 scIGANs takes tab-delimited text file(s) as input. The expression count matrix file is required and needs to be imputed. The cell labels file is optional and contains the cell labels, each per row with the same cell order as in expression matrix file. The following shows the toy example formats.
 ![input format](https://raw.githubusercontent.com/xuyungang/Reproducibility/master/scIGANs/scIGANs_input.png)
 ### <a name="output"></a>Output file
-scIGANs will output one file of expression matrix, with the same format as input and only has some zero-count imputed.
+scIGANs will output one file of expression matrix, with the same format as input and only has some zero-counts replaced with expression values imputed by scIGANs.
 
 ### <a name="test"></a>Run with test_data
 `scIGANs scIGNAs/install/path/test_data/ercc.txt -n 1 [options]`
