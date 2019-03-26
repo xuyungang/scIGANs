@@ -80,7 +80,8 @@ ncls=$(awk -F_ '{print $4}' <<< $out)
 fname=`basename $e_matrix` ## get the filename without path
 for (( i=1; i<=$nf; i++ ))
 do
-	echo $tmp/${i}_${fname}
+	echo $i/$nf ...
+	echo ""
 	python ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${i}_${fname} --file_c=${e_matrix}.label.csv --ncls=$ncls --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --n_cpu=$process --train
 	python ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${i}_${fname} --file_c=${e_matrix}.label.csv --ncls=$ncls --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --n_cpu=$process --impute
 done
