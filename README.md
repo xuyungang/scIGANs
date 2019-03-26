@@ -43,7 +43,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
   - For Mac OS: `conda env create -f scIGANs.conda.env.Mac.yml`
   ####  Manually installation
   - **R packages:**  scIGANs requires two R packages: `SamSPECTRAL` and `Rtsne`. Make sure you have the permission to install R packages to the default lib.
-  - **python modules:** `pytorch`, `numpy`(will be install wiht pytorch when using `conda install`), `pandas`, `torchvision`, and `joblib` are required for scIGANS.
+  - **python modules:** `pytorch`, `numpy`(will be installed with pytorch when using `conda install`), `pandas`, `torchvision`, and `joblib` are required for scIGANS.
 ## <a name="run"></a>Use scIGNAs
 ### <a name="cmd"></a>Commands and options
 
