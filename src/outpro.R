@@ -7,12 +7,13 @@ outdir = args[3]
 #file = "ercc.txt"
 load(paste(tmp,"/original.RData", sep = ""))
 gcm <- data.frame()
-
 for(i in 1:numD){
-  i=1
+  i = 1
   d <- read.csv(file = paste(tmp,"/scIGANs-",i,"_", file,".csv", sep = ""), header = T)
-  gcm = rbind(gcm, d)
+  gcm = rbind(gcm, t(d[,-1]))
 }
+
+gcm <- cbind("Gene_ID"=NA, gcm)
 colnames(gcm) = cellnames
 gcm_out = gcm[c(1:geneCount),]
 gcm_out[,1] = genenames
