@@ -60,7 +60,7 @@ if(is.null(label) || is.na(label)){## if no label file provided, then run pre-cl
     m<-SamSPECTRAL(full,separation.factor =0.5,normal.sigma = normal.sigma)
    ncls = length(unique(m))
     #output
-    cluster<-data.frame(cls=m[!is.na(m)])
+    cluster<-data.frame(cls=m)
     label = paste(file,".label.csv", sep = "")
     write.csv(cluster,label,quote=F,row.names = T)
   message("Done. Label was output in ", label)
@@ -83,6 +83,6 @@ for(i in 1:numD){
  
   subd<-as.data.frame(sub_gcm)
   subfile = paste(tmp,"/",i,"_",basename(file), sep = "")
-  write.csv(subd[,!is.na(m)],subfile,quote=F,row.names = T)
+  write.csv(subd,subfile,quote=F,row.names = T)
 }
 cat(paste("_",numD,"_",ncls,sep = ""))
