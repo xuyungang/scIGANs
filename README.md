@@ -74,8 +74,8 @@ scIGANs takes tab-delimited text file(s) as input. The expression count matrix f
 scIGANs will output one file of expression matrix, with the same format as input and only has some zero-counts replaced with expression values imputed by scIGANs.
 
 ### <a name="test"></a>Run with test_data
-Without label file: `scIGANs scIGNAs/install/path/test_data/ercc.txt -n 1 [options]`
-With label file: `scIGANs scIGNAs/install/path/test_data/ercc.txt -l ercc.label.txt -n 1 [options]`
+- Without label file: `scIGANs scIGNAs/install/path/test_data/ercc.txt -n 1 [options]`
+- With label file: `scIGANs scIGNAs/install/path/test_data/ercc.txt -l ercc.label.txt -n 1 [options]`
 ## <a name="contact"></a>Contact
 Yungang Xu yungang.xu@uth.tmc.edu
 
