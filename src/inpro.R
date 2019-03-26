@@ -1,6 +1,7 @@
 
-message("Check dependent packages...")
+message("Check package: SamSPECTRAL...")
 library(SamSPECTRAL)
+message("done")
 message("Check package: Rtsne...")
 library(Rtsne)
 message("done")
@@ -44,7 +45,7 @@ gcm <- upSample(d, numD*fig_h^2)
 #normalize data such that maximum vale for each cell equals to 1
 reads_max_cell<-apply(gcm,2,max,na.rm=T)## the max value of each column
 save(genenames, cellnames, geneCount, cellCount, reads_max_cell, numD, file = paste(tmp,"/original.RData", sep = ""))
-gcm_n<-gcm/matrix(reads_max_cell,nrow=geneCount,ncol=cellCount,byrow = T)
+gcm_n<-gcm/matrix(reads_max_cell,nrow=numD*fig_h^2,ncol=cellCount,byrow = T)
 set.seed(100)
 #process the label
 
