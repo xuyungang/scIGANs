@@ -1,7 +1,6 @@
 
-message("Check package: SamSPECTRAL...")
+message("Check dependent packages...")
 library(SamSPECTRAL)
-message("done")
 message("Check package: Rtsne...")
 library(Rtsne)
 message("done")
