@@ -80,8 +80,8 @@ class MyDataset(Dataset):
 
     def __getitem__(self, idx):
     # use astype('double/float') to sovle the runtime error caused by data mismatch.
-        data = self.data.iloc[:,idx].as_matrix().reshape(self.fig_h,self.fig_h,1).astype('double')
-        label = self.data_cls.iloc[idx, :].as_matrix().astype('int')
+        data = self.data.iloc[:,idx].values.reshape(self.fig_h,self.fig_h,1).astype('double')
+        label = self.data_cls.iloc[idx, :].values.astype('int')
         sample = {'data': data, 'label': label}
         if self.transform:
             sample = self.transform(sample)
@@ -109,10 +109,10 @@ def one_hot(batch,depth):
 def weights_init_normal(m):
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
-        torch.nn.init.normal(m.weight.data, 0.0, 0.02)
+        torch.nn.init.normal_(m.weight.data, 0.0, 0.02)
     elif classname.find('BatchNorm2d') != -1:
-        torch.nn.init.normal(m.weight.data, 1.0, 0.02)
-        torch.nn.init.constant(m.bias.data, 0.0)
+        torch.nn.init.normal_(m.weight.data, 1.0, 0.02)
+        torch.nn.init.constant_(m.bias.data, 0.0)
 #%%
 class Generator(nn.Module):
     def __init__(self):
