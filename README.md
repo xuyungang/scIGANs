@@ -22,7 +22,7 @@ scIGANs currently can only be built and run on Linux/Unix systems.
 ### <a name="build"></a>Install scIGANs
 - **Download** `git clone https://github.com/xuyungang/scIGANs.git`
 - `cd scIGANs`
-- **Install** `bash scIGANs.install [-p dir/to/install]`
+- **Install** `bash scIGANs.installer [-p dir/to/install]`
   - use `-p` option to direct the installation to a sepecific directory; default, current working directory.
 - **Check installation** `scIGANs -h`
   - For successful installation, you will see the help message.
