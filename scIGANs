@@ -38,6 +38,7 @@ while (( "$#" )); do
       shift 2
       ;;
     -h|--help)
+    echo ""
 	echo "scIGANs_0.1.1"
     echo "Usage: scIGANs in.matrix.txt [options]"
     	echo "in.matrix.txt A tab-delimited text file, containing the expression counts with genes in rows and cells in columns. The first row is header and first column is gene IDs or names. <required>
@@ -73,6 +74,7 @@ set -e
 # create a tmp folder for intermediate outputs
 tmp='tmp'$(date '+%s')
 mkdir -p $tmp
+echo ""
 echo "scIGANs_0.1.1"
 out=`Rscript ${Bashdir}/src/inpro.R ${e_matrix} $tmp $label`
 nf=$(awk -F, '{n=split($NF,a,"|");print a[n-2]}' <<< $out)
