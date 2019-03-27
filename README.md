@@ -40,7 +40,9 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
   2. Create conda envirenment for scIGANs
   - `cd scIGANs`
     
-  **Note:** if you have scIGNAs conda environment configured before, please remove it before proceeding.
+    **Note:** if you have scIGNAs conda environment configured before, please remove it before proceeding.
+    
+    `conda env remove -n scIGNAs`
   - For Linux: `conda env create -f scIGANs.conda.env.Linux.yml`
   - For Mac OS: `conda env create -f scIGANs.conda.env.Mac.yml`
 
