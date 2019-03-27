@@ -81,6 +81,7 @@ label=$(awk -F, '{n=split($NF,a,"|");print a[n]}' <<< $out)
 fname=`basename $e_matrix` ## get the filename without path
 for (( i=1; i<=$nf; i++ ))
 do
+	echo ""
 	echo "Training "$i/$nf ...
 	echo ""
 	python ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${i}_${fname} --file_c=$label --ncls=$ncls --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --n_cpu=$process --train
@@ -88,5 +89,5 @@ do
 done
 
 Rscript ${Bashdir}/src/outpro.R $fname $tmp $outdir
-#rm -r $tmp
+rm -r $tmp
 

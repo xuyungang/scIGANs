@@ -49,9 +49,9 @@ parser.add_argument('--lr_rate', type=int, default=10, help='rate for slow learn
 
 opt = parser.parse_args()
 #opt.impute=True
-print(opt)
+#print(opt)
 prestr=datetime.now().strftime('-%m%d%H%M-')
-print(prestr)
+#print(prestr)
 
 img_shape = (opt.channels, opt.img_size, opt.img_size)
 
@@ -378,7 +378,7 @@ if opt.train:
                                                                 M, k))
     
             batches_done = epoch * len(dataloader) + i
-        print(prestr+str(epoch)+'.pt')
+        #print(prestr+str(epoch)+'.pt')
         torch.save(discriminator.state_dict(),'images/d'+prestr+str(epoch)+'.pt')
         torch.save(generator.state_dict(),'images/g'+prestr+str(epoch)+'.pt')
             
