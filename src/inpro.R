@@ -57,21 +57,21 @@ if(is.null(label) || is.na(label)){## if no label file provided, then run pre-cl
     full<-tsne3$Y
     normal.sigma <-50
 
-    m<-SamSPECTRAL(full,separation.factor =0.5,normal.sigma = normal.sigma)
+    m<-SamSPECTRAL(full,separation.factor =0.5,normal.sigma = normal.sigma, talk = F)
    ncls = length(unique(m))
     #output
-    cluster<-data.frame(cls=m)
+    cluster<-data.frame(Cells=cellnames[-1],Label = m)
     label = paste(file,".label.csv", sep = "")
-    write.csv(cluster,label,quote=F,row.names = T)
+    write.csv(cluster,label,quote=F,row.names = F)
   message("Done. Label was output in ", label)
 }else{## convert the provided labels to integers
   message("Label file ", label, " was provided.")
-  cls = read_tsv(label, col_names = F)
-  cls.factor = factor(cls$X1)
+  cls = read.table(label, header = F, sep = "\t")#read_tsv(label, col_names = F)
+  cls.factor = factor(cls[,1])
   ncls = length(levels(cls.factor))
-  cluster<-data.frame(cls = unclass(cls.factor))
-  label = paste(file,".label.csv", sep = "")
-  write.csv(cluster,label,quote=F,row.names = T)
+  cluster<-data.frame(Cells=cellnames[-1],Label = unclass(cls.factor))
+  label = paste(tmp,"/",basename(file),".label.csv", sep = "")
+  write.csv(cluster,label,quote=F,row.names = F)
 }
 
 for(i in 1:numD){
@@ -85,4 +85,4 @@ for(i in 1:numD){
   subfile = paste(tmp,"/",i,"_",basename(file), sep = "")
   write.csv(subd,subfile,quote=F,row.names = T)
 }
-cat(paste("_",numD,"_",ncls,sep = ""))
+cat(paste("|",numD,"|",ncls,"|",label,sep = ""))
