@@ -20,7 +20,7 @@ export PATH=${path}/scIGANs${version}/:$PATH
 echo ""
 echo 'scIGANs was installed in '${path}/scIGANs${version}/
 echo ""
-echo "For this change to become active, you have to open a new terminal."
+echo "For this change to become active, you may need to open a new terminal or run source ~/.bashrc first."
 echo ""
 echo Thank you for installing scIGANs${version}!
 echo ""
