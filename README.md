@@ -24,6 +24,7 @@ scIGANs currently can only be built and run on Linux/Unix systems.
 - `cd scIGANs`
 - **Install** `bash scIGANs.installer [-p dir/to/install]`
   - use `-p` option to direct the installation to a sepecific directory; default, current working directory.
+  - You may need to start a new terminal or `source ~/.bashrc` to enable `scGANs` executable from your `$PATH`.
 - **Check installation** `scIGANs -h`
   - For successful installation, you will see the help message.
   - Occasionally, you may need to restart you terminal to run **`scIGANs`**.
