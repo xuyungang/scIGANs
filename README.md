@@ -62,20 +62,20 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 
     - `-h --help`      Show this usage message and exit scIGANs. 
     - *Input:*
-        - `in.matrix.txt`   A tab-delimited text file, containing the expression counts with genes in 
+        - `in.matrix.txt` \[STR]  A tab-delimited text file (including appropriate PATH), containing the expression counts with genes in 
                          rows and cells in columns. The  first row is header and first column is gene IDs
-                         or names. \<required> 
-        - `-l --label_file` \[STR]  A text file contain the labels (cell types, subpopulations), 
-                                each per line with the same order in in.matrix.txt. \<optional> 
+                         or names. \<**required**> 
+        - `-l --label_file` \[STR]  A text file (including appropriate PATH) contains the labels (cell types, subpopulations, etc.), 
+                                one label per line per cell  with the same order in in.matrix.txt. \<**optional**> 
                                 Default: scIGANs will learn the subpopulations using Spectral clustering.
     - *Training:*
         - `-n --n_epochs`   \[INT]   The number of epochs to train the GANs. \<optional> Default: 200
-        - `-p --process`    \[INT]   Number of threads to run scIGANs. \<optional> Default: 20
+        - `-p --process`    \[INT]   Number of threads to run scIGANs. \<**optional**> Default: 20
     - *Imputing:*
-        - `-s --sim_szie`   \[INT]   Number of generated datasets for imputing. \<optional> Default: 200
-        - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<optional> Default: 10
+        - `-s --sim_szie`   \[INT]   Number of generated datasets for imputing. \<**optional**> Default: 200
+        - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<**optional**> Default: 10
     - *Output:*
-         - `-o --outdir`    \[STR]   output directory. \<optional> Default: current working directory
+         - `-o --outdir`    \[STR]   Output directory. \<**optional**> Default: current working directory
 ### <a name="input"></a>Input file format
 scIGANs takes tab-delimited text file(s) as input. The expression count matrix file is required and needs to be imputed. The cell labels file is optional and contains the cell labels, each per row with the same cell order as in expression matrix file. The following shows the toy example formats.
 ![input format](https://raw.githubusercontent.com/xuyungang/Reproducibility/master/scIGANs/scIGANs_input.png)
