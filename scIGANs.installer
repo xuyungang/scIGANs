@@ -16,11 +16,14 @@ cp scIGANs $path/scIGANs${version}/
 chmod +x $path/scIGANs${version}/scIGANs
 echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc
 $(echo source ~/.bashrc)
-export PATH=${path}/scIGANs${version}/:$PATH
+
 echo ""
 echo 'scIGANs was installed in '${path}/scIGANs${version}/
 echo ""
-echo "For this change to become active, you may need to open a new terminal or run source ~/.bashrc first."
+echo "For this change to become active, you may need to open a new terminal or run:"
+echo "source ~/.bashrc"
+echo "OR"
+echo "export PATH=${path}/scIGANs${version}/:$PATH"
 echo ""
 echo Thank you for installing scIGANs${version}!
 echo ""
