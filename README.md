@@ -70,8 +70,11 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
                                 Default: scIGANs will learn the subpopulations using Spectral clustering.
     - *Training:*
         - `-n --n_epochs`   \[INT]   The number of epochs to train the GANs. \<optional> Default: 200
-        - `-p --process`    \[INT]   Number of threads to run scIGANs. \<**optional**> Default: 20
+        - `-d --latent_dim` \[INT]   Dimension of the latent space of generator. \<**optional**> Default: 100
+        - `-b --batch_size` \[INT]   The number of samples per batch to load.More samples per batch requires more memory.\<**optional**> Default: 8. NOTE: no more than cell number.
+        - `-t --threthold`  \[FLOAT] Convergence threthold. \<**optional**> Default: 0.01.
     - *Imputing:*
+        - `--impute          Set this option to skip training and directly impute using pretrained model for the same input settings.
         - `-s --sim_szie`   \[INT]   Number of generated datasets for imputing. \<**optional**> Default: 200
         - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<**optional**> Default: 10
     - *Output:*
@@ -79,8 +82,11 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 ### <a name="input"></a>Input file format
 scIGANs takes tab-delimited text file(s) as input. The expression count matrix file is required and needs to be imputed. The cell labels file is optional and contains the cell labels, each per row with the same cell order as in expression matrix file. The following shows the toy example formats.
 ![input format](https://raw.githubusercontent.com/xuyungang/Reproducibility/master/scIGANs/scIGANs_input.png)
-### <a name="output"></a>Output file
-scIGANs will output one file of expression matrix, with the same format as input and only has some zero-counts replaced with expression values imputed by scIGANs.
+### <a name="output"></a>Output files
+scIGANs will generate following files:
+- Model files: one file for Discriminator and one file for Generator are located in thhe folder "GANs_models/". Files are named in the format of \<in.matrix.txt>-<label_file_name>-\<latent_dim>-\<n_epochs>-\<cluster_number>-g.pt or -d.pt.
+- Imputed matrix: expression matrix, with the same format as input and only has some zero-counts replaced with expression values imputed by scIGANs. File is named in the format of scIGANs_\<timestamp>_\<in_matrix_filename>.
+- Log file: a log file of the running, named as scIGANs_\<timestamp>_\<in_matrix_filename>.log.
 
 ### <a name="test"></a>Run with test_data
 - Without label file: `scIGANs scIGNAs/install/path/test_data/ercc.txt -n 1 [options]`
@@ -94,5 +100,4 @@ Xiaobo Zhou xiaobo.zhou@uth.tmc.edu
 ### <a name="issue"></a>Comment and bug report
 [github issues](https://github.com/xuyungang/scIGANs0.1.1/issues)
 ### <a name="cite"></a>Citation
-Yungang Xu, Zhigang Zhang, Lei You, Jiajia Liu, Xiaobo Zhou. (2019) **scIGANs: Generative adversarial networks for 
-single-cell RNA-seq imputation.** In preparation (Coming soon on BioRxiv). 
+Yungang Xu, Zhigang Zhang, Lei You, Jiajia Liu, Xiaobo Zhou. (2019) **scIGANs: Generative adversarial networks for single-cell RNA-seq imputation.** In preparation (Coming soon on BioRxiv). 
