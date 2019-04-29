@@ -67,7 +67,7 @@ while (( "$#" )); do
 	echo "-d | --latent_dim <integer>	optional	dimension of the latent space of generator. Default = 100"
 	echo "-b | --batch_size <integer>	optional	how many samples per batch to load. More samples per batch requires more memory. Default = 8; max=number_of_cells"
 	echo "-t | --threthold <integer>	optional	convergence threthold. Default = 0.01"
-	echo "--impute	optional	Set this option to skip training and directly impute using pretrained model for the same input settings ()."
+	echo "--impute	optional	Set this option to skip training and directly impute using pretrained model for the same input settings."
 	echo "-o | --outdir <string>	optional	set the path where to write the imputed matrix. Default: current working directory (pwd)."
     shift
 	exit
