@@ -74,7 +74,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
         - `-b --batch_size` \[INT]   The number of samples per batch to load.More samples per batch requires more memory.\<**optional**> Default: 8. NOTE: no more than cell number.
         - `-t --threthold`  \[FLOAT] Convergence threthold. \<**optional**> Default: 0.01.
     - *Imputing:*
-        - `--impute          Set this option to skip training and directly impute using pretrained model for the same input settings.
+        - `--impute`         Set this option to skip training and directly impute using pretrained model for the same input settings.
         - `-s --sim_szie`   \[INT]   Number of generated datasets for imputing. \<**optional**> Default: 200
         - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<**optional**> Default: 10
     - *Output:*
@@ -84,9 +84,9 @@ scIGANs takes tab-delimited text file(s) as input. The expression count matrix f
 ![input format](https://raw.githubusercontent.com/xuyungang/Reproducibility/master/scIGANs/scIGANs_input.png)
 ### <a name="output"></a>Output files
 scIGANs will generate following files:
-- Model files: one file for Discriminator and one file for Generator are located in thhe folder "GANs_models/". Files are named in the format of \<in.matrix.txt>-<label_file_name>-\<latent_dim>-\<n_epochs>-\<cluster_number>-g.pt or -d.pt.
-- Imputed matrix: expression matrix, with the same format as input and only has some zero-counts replaced with expression values imputed by scIGANs. File is named in the format of scIGANs_\<timestamp>_\<in_matrix_filename>.
-- Log file: a log file of the running, named as scIGANs_\<timestamp>_\<in_matrix_filename>.log.
+- `Model files:` one file for Discriminator and one file for Generator are located in thhe folder "GANs_models/". Files are named in the format of \<in.matrix.txt>-<label_file_name>-\<latent_dim>-\<n_epochs>-\<cluster_number>-g.pt or -d.pt.
+- `Imputed matrix:` expression matrix, with the same format as input and only has some zero-counts replaced with expression values imputed by scIGANs. File is named in the format of scIGANs_\<timestamp>_\<in_matrix_filename>.
+- `Log file:` a log file of the running, named as scIGANs_\<timestamp>_\<in_matrix_filename>.log.
 
 ### <a name="test"></a>Run with test_data
 - Without label file: `scIGANs scIGNAs/install/path/test_data/ercc.txt -n 1 [options]`
