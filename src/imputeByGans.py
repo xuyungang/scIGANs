@@ -1,9 +1,12 @@
+## last update: 2019/04/28
+
 from __future__ import print_function, division
 import argparse
 import os
 import numpy as np
 import pandas as pd
 import math
+import sys
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
 from torch.utils.data import DataLoader
@@ -18,20 +21,20 @@ from joblib import Parallel, delayed
 import multiprocessing
 from datetime import datetime
 
-if  os.path.isdir('images')!=True:
-    os.makedirs('images')
+if  os.path.isdir('GANs_models')!=True:
+    os.makedirs('GANs_models')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--n_epochs', type=int, default=200, help='number of epochs of training')
-parser.add_argument('--batch_size', type=int, default=64, help='size of the batches')
+parser.add_argument('--batch_size', type=int, default=8, help='size of the batches')
 parser.add_argument('--kt', type=float, default=0, help='kt parameters')
 parser.add_argument('--gamma', type=float, default=0.95, help='gamma parameters')
 parser.add_argument('--lr', type=float, default=0.0002, help='adam: learning rate')
 parser.add_argument('--b1', type=float, default=0.5, help='adam: decay of first order momentum of gradient')
 parser.add_argument('--b2', type=float, default=0.999, help='adam: decay of first order momentum of gradient')
-parser.add_argument('--n_cpu', type=int, default=20, help='number of cpu threads to use during batch generation')
+#parser.add_argument('--n_cpu', type=int, default=20, help='number of cpu threads to use during batch generation')
 parser.add_argument('--latent_dim', type=int, default=100, help='dimensionality of the latent space')
-parser.add_argument('--img_size', type=int, default=124, help='size of each image dimension')
+parser.add_argument('--img_size', type=int, default=100, help='size of each image dimension')
 parser.add_argument('--channels', type=int, default=1, help='number of image channels')
 parser.add_argument('--n_critic', type=int, default= 1, help='number of training steps for discriminator per iter')
 parser.add_argument('--sample_interval', type=int, default=400, help='interval between image sampling')
@@ -45,18 +48,25 @@ parser.add_argument('--file_c', type=str, default='', help='path of cls file')
 parser.add_argument('--ncls', type=int, default=4, help='number of clusters')
 parser.add_argument('--knn_k', type=int, default=10, help='neighours used')
 parser.add_argument('--lr_rate', type=int, default=10, help='rate for slow learning')
+parser.add_argument('--threthold', type=float, default=0.01, help='the convergence threthold')
 
+max_ncls=16  # 
 
 opt = parser.parse_args()
 #opt.impute=True
 #print(opt)
-prestr=datetime.now().strftime('-%m%d%H%M-')
-#print(prestr)
+model_basename = os.path.basename(opt.file_d)+"-"+os.path.basename(opt.file_c)+"-"+str(opt.latent_dim)+"-"+str(opt.n_epochs)+"-"+str(opt.ncls)
 
 img_shape = (opt.channels, opt.img_size, opt.img_size)
 
 cuda = True if torch.cuda.is_available() else False
-
+#%% for debug use only
+#opt.file_d='ercc.csv'
+#opt.file_c='ercc.label.txt'
+#opt.img_size=9
+#opt.train=True
+#opt.n_epochs = 1
+#cuda = False
 #%%
 class MyDataset(Dataset):
     """Operations with the datasets."""
@@ -70,9 +80,10 @@ class MyDataset(Dataset):
                 on a sample.
         """
         self.data = pd.read_csv(d_file,header=0,index_col=0)
-        self.data_cls = pd.read_csv(cls_file,header=0,index_col=0)
+        d = pd.read_csv(cls_file,header=None,index_col=False)  #
+        self.data_cls = pd.Categorical(d.iloc[:,0]).codes      #
         self.transform = transform
-        self.fig_h = int(math.sqrt(self.data.shape[0]))
+        self.fig_h = opt.img_size ##
         
 
     def __len__(self):
@@ -80,8 +91,8 @@ class MyDataset(Dataset):
 
     def __getitem__(self, idx):
     # use astype('double/float') to sovle the runtime error caused by data mismatch.
-        data = self.data.iloc[:,idx].values.reshape(self.fig_h,self.fig_h,1).astype('double')
-        label = self.data_cls.iloc[idx, :].values.astype('int')
+        data = self.data.iloc[:,idx].values[0:(self.fig_h*self.fig_h),].reshape(self.fig_h,self.fig_h,1).astype('double')  #
+        label = np.array(self.data_cls[idx]).astype('int32')         #
         sample = {'data': data, 'label': label}
         if self.transform:
             sample = self.transform(sample)
@@ -113,77 +124,70 @@ def weights_init_normal(m):
     elif classname.find('BatchNorm2d') != -1:
         torch.nn.init.normal_(m.weight.data, 1.0, 0.02)
         torch.nn.init.constant_(m.bias.data, 0.0)
-#%%
 class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
 
         self.init_size = opt.img_size // 4
         self.cn1=32
-        self.l1 = nn.Sequential(nn.Linear(opt.latent_dim, self.cn1*self.init_size**2))
-        
+        self.l1 = nn.Sequential(nn.Linear(opt.latent_dim, self.cn1*(self.init_size**2)))
+        self.l1p = nn.Sequential(nn.Linear(opt.latent_dim, self.cn1*(opt.img_size**2)))
 
-        self.conv_blocks_01 = nn.Sequential(
+
+        
+        self.conv_blocks_01p = nn.Sequential(
             nn.BatchNorm2d(self.cn1),
-            nn.Upsample(scale_factor=2),
-            nn.Conv2d(self.cn1, 2*self.cn1, 3, stride=1, padding=1),
-            nn.BatchNorm2d(2*self.cn1, 0.8),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2),
-            nn.Conv2d(2*self.cn1, self.cn1, 3, stride=1, padding=1),
-            nn.ReLU(),
-        )
-        self.conv_blocks_02 = nn.Sequential(
-#            nn.BatchNorm2d(9),
-            nn.Upsample(scale_factor=16),#torch.Size([bs, 128, 16, 16])
-            nn.Conv2d(opt.ncls,  self.cn1, 3, stride=1, padding=1),#torch.Size([bs, 128, 16, 16])
-            nn.BatchNorm2d( self.cn1),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=4),#torch.Size([bs, 128, 32, 32])
-            nn.Conv2d( self.cn1, self.cn1//2, 3, stride=1, padding=0),#torch.Size([bs, 64, 32, 32])
-            nn.BatchNorm2d( self.cn1//2),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2),#torch.Size([bs, 128, 32, 32])
-            nn.Conv2d( self.cn1//2,  self.cn1//4, 3, stride=1, padding=1),#torch.Size([bs, 64, 32, 32])
-            nn.BatchNorm2d( self.cn1//4),
-            nn.ReLU(),
-
-            
-
-#            nn.Tanh()
+#            nn.Upsample(scale_factor=2),
+            nn.Conv2d(self.cn1, self.cn1, 3, stride=1, padding=1),
+            nn.BatchNorm2d(self.cn1, 0.8),
+            nn.ReLU(),            
         )
         
+
+        
+        self.conv_blocks_02p = nn.Sequential(
+#            nn.BatchNorm2d(9),
+            nn.Upsample(scale_factor=opt.img_size),#torch.Size([bs, 128, 16, 16])
+            nn.Conv2d(max_ncls,  self.cn1//4, 3, stride=1, padding=1),#torch.Size([bs, 128, 16, 16])
+            nn.BatchNorm2d( self.cn1//4),
+            nn.ReLU(),           
+        )
+
+                
         self.conv_blocks_1 = nn.Sequential(
             nn.BatchNorm2d(40, 0.8),
             nn.Conv2d(40, self.cn1, 3, stride=1, padding=1),#torch.Size([bs, 1, 32, 32])
             nn.BatchNorm2d(self.cn1),
             nn.ReLU(),
             nn.Conv2d(self.cn1, opt.channels, 3, stride=1, padding=1),#torch.Size([bs, 1, 32, 32])
-            #nn.LeakyReLU(0.2, inplace=True),
-            #nn.Tanh()
             nn.Sigmoid()
         )
     def forward(self, noise,label_oh):
-        out = self.l1(noise)        
-        out = out.view(out.shape[0], self.cn1, self.init_size, self.init_size)
-        out01 = self.conv_blocks_01(out) #([4, 32, 124, 124])
+        out = self.l1p(noise)        
+        out = out.view(out.shape[0], self.cn1, opt.img_size, opt.img_size)
+        out01 = self.conv_blocks_01p(out) #([4, 32, 124, 124])
+#        
+        label_oh=label_oh.unsqueeze(2)
+        label_oh=label_oh.unsqueeze(2)  
+        out02 = self.conv_blocks_02p(label_oh) #([4, 8, 124, 124])
         
-        label_oh=label_oh.unsqueeze(2)
-        label_oh=label_oh.unsqueeze(2)
-        out02 = self.conv_blocks_02(label_oh) #([4, 8, 124, 124])
-##        
+       
         out1=torch.cat((out01,out02),1)
         out1=self.conv_blocks_1(out1)
         return out1
+        
+
 
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
         
         self.cn1=32
+        self.down_size0 = 64
+        self.down_size = 32
         #pre
         self.pre= nn.Sequential(
-            nn.Linear(opt.img_size**2,opt.img_size**2),
+            nn.Linear(opt.img_size**2,self.down_size0**2),
         )
 
         # Upsampling
@@ -192,23 +196,24 @@ class Discriminator(nn.Module):
             nn.MaxPool2d(2,2),
             nn.BatchNorm2d(self.cn1),            
             nn.ReLU(),
-            nn.Conv2d(self.cn1, self.cn1//2, 3, 1, 2),
-            nn.MaxPool2d(2,2),
+            nn.Conv2d(self.cn1, self.cn1//2, 3, 1, 1),
+#            nn.MaxPool2d(2,2),
             nn.BatchNorm2d(self.cn1//2),            
             nn.ReLU(),
         )
-        self.conv_blocks02 = nn.Sequential(
+        
+        
+        self.conv_blocks02p = nn.Sequential(
 #            nn.BatchNorm2d(9),
-            nn.Upsample(scale_factor=8),#torch.Size([bs, 128, 16, 16])
-            nn.Conv2d(opt.ncls, self.cn1, 3, stride=1, padding=1),#torch.Size([bs, 128, 16, 16])
-            nn.BatchNorm2d(self.cn1),
+            nn.Upsample(scale_factor=self.down_size),#torch.Size([bs, 128, 16, 16])
+            nn.Conv2d(max_ncls,  self.cn1//4, 3, stride=1, padding=1),#torch.Size([bs, 128, 16, 16])
+            nn.BatchNorm2d( self.cn1//4),
             nn.ReLU(),
-            nn.Upsample(scale_factor=4),#torch.Size([bs, 128, 32, 32])
-            nn.Conv2d(self.cn1, self.cn1//2, 3, stride=1, padding=1),#torch.Size([bs, 64, 32, 32])
         )
+        
         # Fully-connected layers
-        self.down_size = 32
-        down_dim = 32 * (self.down_size)**2
+        
+        down_dim =24 * (self.down_size)**2
         self.fc = nn.Sequential(
             nn.Linear(down_dim, 16),
             nn.BatchNorm1d(16, 0.8),
@@ -217,33 +222,54 @@ class Discriminator(nn.Module):
             nn.BatchNorm1d(down_dim),
             nn.ReLU()
         )
-        # Upsampling
+        # Upsampling 32X32
         self.up = nn.Sequential(
             nn.Upsample(scale_factor=4),
-            nn.Conv2d(32, 16, 3, 1, 0),
+            nn.Conv2d(24, 16, 3, 1, 1),
+            nn.MaxPool2d(2,2),
             nn.BatchNorm2d(16),
             nn.ReLU(),
-            nn.Conv2d(16, opt.channels, 3, 1, 0),
+            nn.Conv2d(16, 8, 3, 1, 1),
+            nn.MaxPool2d(2,2),
+            nn.BatchNorm2d(8),
+            nn.ReLU(),
+            nn.Conv2d(8, 4, 3, 1, 1),
+            nn.MaxPool2d(2,2),
+            nn.BatchNorm2d(4),
+            nn.ReLU(),
+            nn.Conv2d(4, 4, 3, 1, 1),
+            nn.MaxPool2d(2,2),
+            nn.BatchNorm2d(4),
+            nn.ReLU(),
+            nn.Conv2d(4, 4, 3, 1, 1),
+            nn.MaxPool2d(2,2),
+            nn.BatchNorm2d(4),
+            nn.ReLU(),
+            nn.Conv2d(4, 4, 3, 1, 1),
+            nn.MaxPool2d(2,2),
+            nn.BatchNorm2d(4),
+            nn.ReLU(),
+            nn.Conv2d(4, opt.channels, 2, 1, 0),
             nn.Sigmoid(),
         )
 
     def forward(self, img,label_oh):
         
-        out00 = self.pre(img.view((img.size()[0],-1))).view((img.size()[0],1,opt.img_size,opt.img_size))
-#        out00 = img
+        out00 = self.pre(img.view((img.size()[0],-1))).view((img.size()[0],1,self.down_size0,self.down_size0))
         out01 = self.down(out00)#([4, 16, 32, 32])
         
         label_oh=label_oh.unsqueeze(2)
         label_oh=label_oh.unsqueeze(2)
-        out02 = self.conv_blocks02(label_oh)#([4, 16, 32, 32])
-###        
-        out1=torch.cat((out01,out02),1)        
+        out02 = self.conv_blocks02p(label_oh)#([4, 16, 32, 32])
 ####        
+        out1=torch.cat((out01,out02),1)        
+######        
         out = self.fc(out1.view(out1.size(0), -1))
-        out = self.up(out.view(out.size(0), 32, self.down_size, self.down_size))
+        out = self.up(out.view(out.size(0), 24, self.down_size, self.down_size))
         return out
 
-
+       
+#%%
 def my_knn_type(data_imp_org_k,sim_out_k,knn_k=10):
         sim_size=sim_out_k.shape[0]
         out=data_imp_org_k.copy()
@@ -260,6 +286,7 @@ def my_knn_type(data_imp_org_k,sim_out_k,knn_k=10):
         sim_out_c=np.median(sim_out_tmp[:,rel.argsort()[0:knn_k]],axis=1)    
         out[locs]=sim_out_c[locs]
         return out
+
 #%%
 # Initialize generator and discriminator
 generator = Generator()
@@ -268,7 +295,9 @@ discriminator = Discriminator()
 if cuda:
     generator.cuda()
     discriminator.cuda()
-
+    print("scIGANs is runing on GPUs.")
+else:
+    print("scIGANs is runing on CPUs.")
 # Initialize weights
 generator.apply(weights_init_normal)
 discriminator.apply(weights_init_normal)
@@ -290,6 +319,7 @@ optimizer_G = torch.optim.Adam(generator.parameters(), lr=opt.lr, betas=(opt.b1,
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
 
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
+
 #%%
 # ----------
 #  Training
@@ -301,21 +331,34 @@ lambda_k = 0.001
 k = opt.kt
 
 
-if opt.train:    
-    if opt.dpt!='' and cuda==True:
-        discriminator.load_state_dict(torch.load(opt.dpt))    
-        generator.load_state_dict(torch.load(opt.gpt))
-    if opt.dpt!='' and cuda != True:
-        discriminator.load_state_dict(torch.load(opt.dpt, map_location=lambda storage, loc: storage))    
-        generator.load_state_dict(torch.load(opt.gpt, map_location=lambda storage, loc: storage))
-    
+
+if opt.train:
+    model_exists = os.path.isfile('GANs_models/'+model_basename+'-g.pt')
+    if model_exists:
+        overwrite = input("WARNING: A trained model exists with the same settings for your data.\n         Do you want to train and overwrite it?: (y/n)\n")
+        if overwrite != "y": 
+            print("The training was deprecated since optical model exists.")
+            print("scIGANs continues imputation using existing model...")
+            sys.exit()# if model exists and do not want to train again, exit the program
+    print("The optimal model will be output in \""+os.getcwd()+"/GANs_models\" with basename = " + model_basename)
+#    if opt.dpt!='' and cuda==True:
+#        discriminator.load_state_dict(torch.load(opt.dpt))    
+#        generator.load_state_dict(torch.load(opt.gpt))
+#    if opt.dpt!='' and cuda != True:
+#        discriminator.load_state_dict(torch.load(opt.dpt, map_location=lambda storage, loc: storage))    
+#        generator.load_state_dict(torch.load(opt.gpt, map_location=lambda storage, loc: storage))
+    max_M = sys.float_info.max
+    min_dM = 0.001
+    dM =  1
     for epoch in range(opt.n_epochs):
+        cur_M = 0
+        cur_dM = 1
         for i, batch_sample in enumerate(dataloader):
 #            if i==0:
 #                break
             imgs = batch_sample['data'].type(Tensor)
             label= batch_sample['label']
-            label_oh = one_hot((label[:,0]-1).type(torch.LongTensor),opt.ncls).type(Tensor)
+            label_oh = one_hot((label).type(torch.LongTensor),max_ncls).type(Tensor)  #
     
     
             # Configure input
@@ -368,37 +411,57 @@ if opt.train:
     
             # Update convergence metric
             M = (d_loss_real + torch.abs(diff)).item()
-    
+            cur_M += M
             #--------------
             # Log Progress
             #--------------
     
-            print ("[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f] -- M: %f, k: %f" % (epoch, opt.n_epochs, i, len(dataloader),
+            print ("[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f] -- M: %f, delta_M: %f,k: %f" % (epoch+1, opt.n_epochs, i+1, len(dataloader),
                                                                 np.asscalar(d_loss.detach().data.cpu().numpy()), np.asscalar(g_loss.detach().data.cpu().numpy()),
-                                                                M, k))
+                                                                M, dM, k))
     
             batches_done = epoch * len(dataloader) + i
-        #print(prestr+str(epoch)+'.pt')
-        torch.save(discriminator.state_dict(),'images/d'+prestr+str(epoch)+'.pt')
-        torch.save(generator.state_dict(),'images/g'+prestr+str(epoch)+'.pt')
-            
+        #get the M of current epoch
+        cur_M = cur_M/len(dataloader)
+        if cur_M < max_M: #if current model is better than previous one
+            torch.save(discriminator.state_dict(),'GANs_models/'+model_basename+'-d.pt')
+            torch.save(generator.state_dict(),'GANs_models/'+model_basename+'-g.pt')
+            dM = min(max_M-cur_M,cur_M)
+            if dM < min_dM: # if convergence threthold meets, stop training
+                print("Training was stopped after " + str(epoch+1)+" epoches since the convergence threthold ("+str(min_dM)+".) reached: " + str(dM))
+                break
+            cur_dM = max_M-cur_M
+            max_M =  cur_M
+        if epoch+1 == opt.n_epochs and cur_dM > min_dM:
+            print("Training was stopped after " + str(epoch+1)+" epoches since the maximum epoches reached: "+str(opt.n_epochs)+".")
+            print("WARNING: the convergence threthold ("+str(min_dM)+") was not met. Current value is: "+str(cur_dM))
+            print("You may need more epoches to get the most optimal model!!!")
 
 if opt.impute:
-
-    
-    if opt.dpt!='' and cuda==True:
-        discriminator.load_state_dict(torch.load(opt.dpt))    
-        generator.load_state_dict(torch.load(opt.gpt))
-    if opt.dpt!='' and cuda != True:
-        discriminator.load_state_dict(torch.load(opt.dpt, map_location=lambda storage, loc: storage))    
-        generator.load_state_dict(torch.load(opt.gpt, map_location=lambda storage, loc: storage))
+    if opt.gpt=='':
+        model_g = 'GANs_models/'+model_basename+'-g.pt'
+        model_exists = os.path.isfile(model_g)
+        if not model_exists: 
+            print("ERROR: There is no model exists with the given settings for your data.")
+            print("Please set --train instead of --impute to train a model fisrt.")
+            sys.exit("scIGANs stopped!!!")# if model exists and do not want to train again, exit the program
+            print()
+    else:
+        model_g = opt.gpt
+    print(model_g+" is used for imputation.")
+    if cuda==True:
+        #discriminator.load_state_dict(torch.load(opt.dpt))    
+        generator.load_state_dict(torch.load(model_g))
+    else:
+        #discriminator.load_state_dict(torch.load(opt.dpt, map_location=lambda storage, loc: storage))    
+        generator.load_state_dict(torch.load(model_g, map_location=lambda storage, loc: storage))
 ######################################################
-###        imp by type
+###        impute by type
 ######################################################
     sim_size=opt.sim_size
     sim_out=list()
     for i in range(opt.ncls):
-        label_oh = one_hot(torch.from_numpy(np.repeat(i,sim_size)).type(torch.LongTensor),opt.ncls).type(Tensor)
+        label_oh = one_hot(torch.from_numpy(np.repeat(i,sim_size)).type(torch.LongTensor),max_ncls).type(Tensor)
        
         # Sample noise as generator input
         z = Variable(Tensor(np.random.normal(0, 1, (sim_size, opt.latent_dim))))
@@ -406,7 +469,6 @@ if opt.impute:
         # Generate a batch of images
         fake_imgs = generator(z,label_oh).detach().data.cpu().numpy()
         sim_out.append(fake_imgs)    
-    print('imputing...')
     mydataset = MyDataset(d_file=opt.file_d,
                                 cls_file=opt.file_c)    
     data_imp_org=np.asarray([mydataset[i]['data'].reshape((opt.img_size*opt.img_size)) for i in range(len(mydataset))]).T
@@ -415,4 +477,5 @@ if opt.impute:
     #by type
     sim_out_org=sim_out
     rels = [my_knn_type(data_imp_org[:,k],sim_out_org[int(mydataset[k]['label'])-1],knn_k=opt.knn_k) for k in range(len(mydataset))]         
-    pd.DataFrame(rels).to_csv(os.path.dirname(opt.file_d)+'/scIGANs-'+os.path.basename(opt.file_d)+'.csv') #imped data  
+    pd.DataFrame(rels).to_csv(os.path.dirname(os.path.abspath(opt.file_d))+'/scIGANs-'+os.path.basename(os.path.abspath(opt.file_d))+'.csv') #imped data  
+
