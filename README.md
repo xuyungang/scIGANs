@@ -28,6 +28,7 @@ scIGANs currently can only be built and run on Linux/Unix systems.
 - **Check installation** `scIGANs -h`
   - For successful installation, you will see the help message.
   - Occasionally, you may need to restart you terminal to run **`scIGANs`**.
+  - If you installed scIGANs before, please use `which scIGANs` to check the currently active version.
 ### <a name="depend"></a>Install dependences
 scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python` (>2.7), `R`(>3.5) and all dependencies before run scIGANs. Users can either use pre-configured conda environment (recommended) or build your own environment manually.
   #### Use pre-configured conda environment (recommended)
