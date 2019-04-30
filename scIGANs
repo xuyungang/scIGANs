@@ -106,7 +106,6 @@ echo ""
 echo "Prechecking input files..."
 echo $(date)"	Prechecking input files..." >> $logfile
 Rscript ${Bashdir}/src/inpro.R ${e_matrix} $tmp $logfile $label 2>&1 | tee -a $logfile
-
 if [ $? -ne 0 ]
 then
 	exit 1
