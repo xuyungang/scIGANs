@@ -96,4 +96,6 @@ if(is.null(label) || is.na(label)){## if no label file provided, then run pre-cl
 
 tmpfile = paste(tmp,"/",basename(file), sep = "")
 write.csv(gcm_n,tmpfile,quote=F,row.names = T)
-cat(paste("|",fig_h,"|",ncls,"|",label,sep = ""))
+write(fig_h, paste(tmp,"/args",sep = ""), append =F)
+write(ncls, paste(tmp,"/args",sep = ""), append =T)
+write(label, paste(tmp,"/args",sep = ""), append =T)
