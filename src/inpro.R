@@ -5,7 +5,6 @@ tmp = args[2]
 label = args[4]
 logfile = args[3]
 ncls = 0 ## the number of clusters
-logfile
 message("Check dependent packages...")
 write(paste(date(), "\tCheck dependent packages...", sep=""), logfile, append = T)
 library(SamSPECTRAL)
