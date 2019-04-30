@@ -1,7 +1,7 @@
 #!/bin/bash
 ## parsing the arguments
 ## last update: 2019/04/28
-version="scIGANs_0.1.1_test"
+version="scIGANs_0.1.1"
 
 epochs=200 # number of epochs for training
 sim_size=200 # number of simulated datasets for imputation
@@ -105,15 +105,20 @@ echo "" >> $logfile
 echo ""
 echo "Prechecking input files..."
 echo $(date)"	Prechecking input files..." >> $logfile
-out=`Rscript ${Bashdir}/src/inpro.R ${e_matrix} $tmp $logfile $label`
+Rscript ${Bashdir}/src/inpro.R ${e_matrix} $tmp $logfile $label 2>&1 | tee -a $logfile
+
 if [ $? -ne 0 ]
 then
 	exit 1
 fi
-img_size=$(awk -F, '{n=split($NF,a,"|");print a[n-2]}' <<< $out)
-ncls=$(awk -F, '{n=split($NF,a,"|");print a[n-1]}' <<< $out)
-label=$(awk -F, '{n=split($NF,a,"|");print a[n]}' <<< $out)
-echo $out >> $logfile
+while read line; do
+par+=($line)
+done < $tmp/args
+
+img_size=${par[0]}
+ncls=${par[1]}
+label=${par[2]}
+
 echo ""
 if [ "$impute" == "" ]
 then
