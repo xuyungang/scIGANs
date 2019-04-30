@@ -113,7 +113,7 @@ fi
 img_size=$(awk -F, '{n=split($NF,a,"|");print a[n-2]}' <<< $out)
 ncls=$(awk -F, '{n=split($NF,a,"|");print a[n-1]}' <<< $out)
 label=$(awk -F, '{n=split($NF,a,"|");print a[n]}' <<< $out)
-echo $out
+echo $out >> $logfile
 echo ""
 if [ "$impute" == "" ]
 then
