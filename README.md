@@ -18,7 +18,7 @@ Generative adversarial networks for single-cell RNA-seq imputation
 scIGANs is a computational tool for single-cell RNA-seq imputation and denoise using Generative Adversarial Networks (GANs). Build on pythorch, scIGNAs enables GPU acceleration inaddition to CPU computing as long as the GPUs are available.
 ## <a name="install"></a>Installation
 ### <a name="os"></a>Operating system
-scIGANs currently can only be built and run on Linux/Unix systems.
+scIGANs currently can only be built and run on Linux/Unix-based systems.
 ### <a name="build"></a>Install scIGANs
 - **Download** `git clone https://github.com/xuyungang/scIGANs.git`
 - `cd scIGANs`
