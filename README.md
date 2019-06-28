@@ -73,7 +73,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
         - `-e|--epochs`   \[INT\]   The number of epochs to train the GANs. \<optional\> Default: 200
         - `-d|--latent_dim` \[INT\]   Dimension of the latent space of generator. \<**optional**\> Default: 100
         - `-b|--batch_size` \[INT\]   The number of samples per batch to load.More samples per batch requires more memory.\<**optional**\> Default: 8. NOTE: no more than cell number.
-        - `-j|--job_name` \[STR\]   A string will be used as prefix to name all output files.\<**optional**> Default: prefix=*\<in.matrix.txt>-<label_file_name>*
+        - `-j|--job_name` \[STR\]   A string will be used as prefix to name all output files.\<**optional**> Default: *prefix=\<in.matrix.txt>-<label_file_name>*
         - `-t --threthold`  \[FLOAT\] Convergence threthold. \<**optional**> Default: 0.01.
     - *Imputing:*
         - `--impute`         Set this option to skip training and directly impute using pretrained model for the same input settings.
