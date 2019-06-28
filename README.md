@@ -63,24 +63,24 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
 
     - `-h --help`      Show this usage message and exit scIGANs. 
     - *Input:*
-        - `in.matrix.txt` \[STR]  A tab-delimited text file (including appropriate PATH), containing the expression counts with genes in 
+        - `in.matrix.txt` \[STR\]  A tab-delimited text file (including appropriate PATH), containing the expression counts with genes in 
                          rows and cells in columns. The  first row is header and first column is gene IDs
-                         or names. \<**required**> 
-        - `-l|--label_file` \[STR]  A text file (including appropriate PATH) contains the labels (cell types, subpopulations, etc.), 
-                                one label per line per cell  with the same order in in.matrix.txt. \<**optional**> 
+                         or names. \<**required**\> 
+        - `-l|--label_file` \[STR\]  A text file (including appropriate PATH) contains the labels (cell types, subpopulations, etc.), 
+                                one label per line per cell  with the same order in in.matrix.txt. \<**optional**\> 
                                 Default: scIGANs will learn the subpopulations using Spectral clustering.
     - *Training:*
-        - `-e|--epochs`   \[INT]   The number of epochs to train the GANs. \<optional> Default: 200
-        - `-d|--latent_dim` \[INT]   Dimension of the latent space of generator. \<**optional**> Default: 100
-        - `-b|--batch_size` \[INT]   The number of samples per batch to load.More samples per batch requires more memory.\<**optional**> Default: 8. NOTE: no more than cell number.
-        - `-j|--job_name` \[STR]   A string will be used as prefix to name all output files.\<**optional**> Default: prefix=`\<in.matrix.txt>-<label_file_name>
-        - `-t --threthold`  \[FLOAT] Convergence threthold. \<**optional**> Default: 0.01.
+        - `-e|--epochs`   \[INT\]   The number of epochs to train the GANs. \<optional\> Default: 200
+        - `-d|--latent_dim` \[INT\]   Dimension of the latent space of generator. \<**optional**\> Default: 100
+        - `-b|--batch_size` \[INT\]   The number of samples per batch to load.More samples per batch requires more memory.\<**optional**\> Default: 8. NOTE: no more than cell number.
+        - `-j|--job_name` \[STR\]   A string will be used as prefix to name all output files.\<**optional**> Default: prefix=*\<in.matrix.txt>-<label_file_name>*
+        - `-t --threthold`  \[FLOAT\] Convergence threthold. \<**optional**> Default: 0.01.
     - *Imputing:*
         - `--impute`         Set this option to skip training and directly impute using pretrained model for the same input settings.
-        - `-s --sim_szie`   \[INT]   Number of generated datasets for imputing. \<**optional**> Default: 200
-        - `-k --knn_n`      \[INT]   Number of nearest neighbours for imputing. \<**optional**> Default: 10
+        - `-s --sim_szie`   \[INT\]   Number of generated datasets for imputing. \<**optional**> Default: 200
+        - `-k --knn_n`      \[INT\]   Number of nearest neighbours for imputing. \<**optional**> Default: 10
     - *Output:*
-         - `-o --outdir`    \[STR]   Output directory. \<**optional**> Default: current working directory
+         - `-o --outdir`    \[STR\]   Output directory. \<**optional**> Default: current working directory
 ### <a name="input"></a>Input file format
 scIGANs takes tab-delimited text file(s) as input. The expression count matrix file is required and needs to be imputed. The cell labels file is optional and contains the cell labels, each per row with the same cell order as in expression matrix file. The following shows the toy example formats.
 ![input format](https://raw.githubusercontent.com/xuyungang/Reproducibility/master/scIGANs/scIGANs_input.png)
