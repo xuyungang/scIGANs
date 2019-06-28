@@ -66,13 +66,14 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
         - `in.matrix.txt` \[STR]  A tab-delimited text file (including appropriate PATH), containing the expression counts with genes in 
                          rows and cells in columns. The  first row is header and first column is gene IDs
                          or names. \<**required**> 
-        - `-l --label_file` \[STR]  A text file (including appropriate PATH) contains the labels (cell types, subpopulations, etc.), 
+        - `-l|--label_file` \[STR]  A text file (including appropriate PATH) contains the labels (cell types, subpopulations, etc.), 
                                 one label per line per cell  with the same order in in.matrix.txt. \<**optional**> 
                                 Default: scIGANs will learn the subpopulations using Spectral clustering.
     - *Training:*
-        - `-n --n_epochs`   \[INT]   The number of epochs to train the GANs. \<optional> Default: 200
-        - `-d --latent_dim` \[INT]   Dimension of the latent space of generator. \<**optional**> Default: 100
-        - `-b --batch_size` \[INT]   The number of samples per batch to load.More samples per batch requires more memory.\<**optional**> Default: 8. NOTE: no more than cell number.
+        - `-e|--epochs`   \[INT]   The number of epochs to train the GANs. \<optional> Default: 200
+        - `-d|--latent_dim` \[INT]   Dimension of the latent space of generator. \<**optional**> Default: 100
+        - `-b|--batch_size` \[INT]   The number of samples per batch to load.More samples per batch requires more memory.\<**optional**> Default: 8. NOTE: no more than cell number.
+        - `-j|--job_name` \[STR]   A string will be used as prefix to name all output files.\<**optional**> Default: prefix=`\<in.matrix.txt>-<label_file_name>
         - `-t --threthold`  \[FLOAT] Convergence threthold. \<**optional**> Default: 0.01.
     - *Imputing:*
         - `--impute`         Set this option to skip training and directly impute using pretrained model for the same input settings.
