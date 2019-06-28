@@ -21,8 +21,6 @@ from joblib import Parallel, delayed
 import multiprocessing
 from datetime import datetime
 
-if  os.path.isdir('GANs_models')!=True:
-    os.makedirs('GANs_models')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--n_epochs', type=int, default=200, help='number of epochs of training')
@@ -49,13 +47,21 @@ parser.add_argument('--ncls', type=int, default=4, help='number of clusters')
 parser.add_argument('--knn_k', type=int, default=10, help='neighours used')
 parser.add_argument('--lr_rate', type=int, default=10, help='rate for slow learning')
 parser.add_argument('--threthold', type=float, default=0.01, help='the convergence threthold')
+parser.add_argument('--job_name', type=str, default="", help='the user-defined job name, which will be used to name the output files.')
+parser.add_argument('--outdir', type=str, default=".", help='the directory for output.')
 
 max_ncls=16  # 
 
 opt = parser.parse_args()
 #opt.impute=True
 #print(opt)
-model_basename = os.path.basename(opt.file_d)+"-"+os.path.basename(opt.file_c)+"-"+str(opt.latent_dim)+"-"+str(opt.n_epochs)+"-"+str(opt.ncls)
+job_name = opt.job_name
+GANs_models = opt.outdir+'/GANs_models'
+if (job_name == ""):
+    job_name=os.path.basename(opt.file_d)+"-"+os.path.basename(opt.file_c)
+model_basename = job_name+"-"+str(opt.latent_dim)+"-"+str(opt.n_epochs)+"-"+str(opt.ncls)
+if  os.path.isdir(GANs_models)!=True:
+    os.makedirs(GANs_models)
 
 img_shape = (opt.channels, opt.img_size, opt.img_size)
 
@@ -333,14 +339,14 @@ k = opt.kt
 
 
 if opt.train:
-    model_exists = os.path.isfile('GANs_models/'+model_basename+'-g.pt')
+    model_exists = os.path.isfile(GANs_models+'/'+model_basename+'-g.pt')
     if model_exists:
         overwrite = input("WARNING: A trained model exists with the same settings for your data.\n         Do you want to train and overwrite it?: (y/n)\n")
         if overwrite != "y": 
             print("The training was deprecated since optical model exists.")
             print("scIGANs continues imputation using existing model...")
             sys.exit()# if model exists and do not want to train again, exit the program
-    print("The optimal model will be output in \""+os.getcwd()+"/GANs_models\" with basename = " + model_basename)
+    print("The optimal model will be output in \""+os.getcwd()+"/"+GANs_models+"\" with basename = " + model_basename)
 #    if opt.dpt!='' and cuda==True:
 #        discriminator.load_state_dict(torch.load(opt.dpt))    
 #        generator.load_state_dict(torch.load(opt.gpt))
@@ -416,16 +422,16 @@ if opt.train:
             # Log Progress
             #--------------
     
-            print ("[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f] -- M: %f, delta_M: %f,k: %f" % (epoch+1, opt.n_epochs, i+1, len(dataloader),
+            sys.stdout.write ("\r[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f] -- M: %f, delta_M: %f,k: %f" % (epoch+1, opt.n_epochs, i+1, len(dataloader),
                                                                 np.asscalar(d_loss.detach().data.cpu().numpy()), np.asscalar(g_loss.detach().data.cpu().numpy()),
                                                                 M, dM, k))
-    
+            sys.stdout.flush()
             batches_done = epoch * len(dataloader) + i
         #get the M of current epoch
         cur_M = cur_M/len(dataloader)
         if cur_M < max_M: #if current model is better than previous one
-            torch.save(discriminator.state_dict(),'GANs_models/'+model_basename+'-d.pt')
-            torch.save(generator.state_dict(),'GANs_models/'+model_basename+'-g.pt')
+            torch.save(discriminator.state_dict(),GANs_models+'/'+model_basename+'-d.pt')
+            torch.save(generator.state_dict(),GANs_models+'/'+model_basename+'-g.pt')
             dM = min(max_M-cur_M,cur_M)
             if dM < min_dM: # if convergence threthold meets, stop training
                 print("Training was stopped after " + str(epoch+1)+" epoches since the convergence threthold ("+str(min_dM)+".) reached: " + str(dM))
@@ -439,7 +445,7 @@ if opt.train:
 
 if opt.impute:
     if opt.gpt=='':
-        model_g = 'GANs_models/'+model_basename+'-g.pt'
+        model_g = GANs_models+'/'+model_basename+'-g.pt'
         model_exists = os.path.isfile(model_g)
         if not model_exists: 
             print("ERROR: There is no model exists with the given settings for your data.")
@@ -477,5 +483,5 @@ if opt.impute:
     #by type
     sim_out_org=sim_out
     rels = [my_knn_type(data_imp_org[:,k],sim_out_org[int(mydataset[k]['label'])-1],knn_k=opt.knn_k) for k in range(len(mydataset))]         
-    pd.DataFrame(rels).to_csv(os.path.dirname(os.path.abspath(opt.file_d))+'/scIGANs-'+os.path.basename(os.path.abspath(opt.file_d))+'.csv') #imped data  
+    pd.DataFrame(rels).to_csv(os.path.dirname(os.path.abspath(opt.file_d))+'/scIGANs-'+job_name+'.csv') #imped data  
 

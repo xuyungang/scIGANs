@@ -72,7 +72,7 @@ if(is.null(label) || is.na(label)){## if no label file provided, then run pre-cl
     write(paste(date(), "\tNo label file provided, generating labels...", sep=""), logfile, append = T)
     pcsn <- prcomp(t(gcm_n))
     #full<-pcsn[,1:50]
-    tsne3 <- Rtsne(pcsn$x, dims = 3, theta=0.2, perplexity=30, verbose=TRUE, max_iter = 1000)
+    tsne3 <- Rtsne(pcsn$x, dims = 3, theta=0.2, perplexity=cellCount%/%4, verbose=TRUE, max_iter = 1000)
     full<-tsne3$Y
     normal.sigma <-50
 

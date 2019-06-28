@@ -11,8 +11,30 @@ batch_size=8 #
 PARAMS=""
 impute=""
 latent_dim=100
-threthold=0.01 ## the convergence threthold; traing will stop if the dM < threthold
+threthold=0.001 ## the convergence threthold; traing will stop if the dM < threthold
+job_name=""
 #e_matrix=$1 ## the first argument is the input expression matrix
+help_message (){
+    echo "--------------"
+	echo $version
+    echo "--------------"
+    echo ""
+    echo "USAGE: scIGANs in.matrix.txt [options]"
+    echo ""
+    echo "in.matrix.txt A tab-delimited text file, containing the expression counts with genes in rows and cells in columns. The first row is header and first column is gene IDs or names. <required>"
+	echo "-h | --help		show this message"
+	echo "-l | --label_file <string>	optional	give the label of cell type or subpopulation for each cell, with the same order of the colounms in expression matrix."
+	echo "-e | --epoch <integer>	optional	set the number of epochs of training. Default = 200"
+	echo "-s | --sim_size <integer>	optional	set the number of generated data for imputation. Default = 200"
+	echo "-k | --knn_k <integer>	optional	set the number of nearest neighbours used for imputation. Default = 10"
+	echo "-d | --latent_dim <integer>	optional	dimension of the latent space of generator. Default = 100"
+	echo "-b | --batch_size <integer>	optional	how many samples per batch to load. More samples per batch requires more memory. Default = 8; max=number_of_cells"
+	echo "-t | --threthold <integer>	optional	convergence threthold. Default = 0.01"
+	echo "--impute	optional	Set this option to skip training and directly impute using pretrained model for the same input settings."
+	echo "-j | --job_name <string>	optional	user-defined job name (a string without spaces), which will be used to name the output files."
+	echo "-o | --outdir <string>	optional	set the path where to write the imputed matrix. Default: current working directory (pwd)."
+    exit
+}
 
 outdir=`pwd`
 Bashdir=$(dirname $BASH_SOURCE)
@@ -22,7 +44,7 @@ while (( "$#" )); do
       label=$2
       shift 2
       ;;
-    -n|--n_epochs)
+    -e|--epoch)
       epochs=$2
       shift 2
       ;;
@@ -46,8 +68,13 @@ while (( "$#" )); do
       threthold=$2
       shift 2
       ;;
+    -j|--job_name)
+      job_name=$2
+      shift 2
+      ;;
     -o|--outdir)
       outdir=$2
+      mkdir -p $outdir
       shift 2
       ;;
     --impute)
@@ -55,22 +82,8 @@ while (( "$#" )); do
       shift
       ;;
     -h|--help)
-    echo ""
-	echo $version
-    echo "Usage: scIGANs in.matrix.txt [options]"
-    echo "in.matrix.txt A tab-delimited text file, containing the expression counts with genes in rows and cells in columns. The first row is header and first column is gene IDs or names. <required>"
-	echo "-h | --help		show this message"
-	echo "-l | --label_file <string>	optional	give the label of cell type or subpopulation for each cell, with the same order of the colounms in expression matrix."
-	echo "-n | --n_epochs <integer>	optional	set the number of epochs of training. Default = 200"
-	echo "-s | --sim_size <integer>	optional	set the number of generated data for imputation. Default = 200"
-	echo "-k | --knn_k <integer>	optional	set the number of nearest neighbours used for imputation. Default = 10"
-	echo "-d | --latent_dim <integer>	optional	dimension of the latent space of generator. Default = 100"
-	echo "-b | --batch_size <integer>	optional	how many samples per batch to load. More samples per batch requires more memory. Default = 8; max=number_of_cells"
-	echo "-t | --threthold <integer>	optional	convergence threthold. Default = 0.01"
-	echo "--impute	optional	Set this option to skip training and directly impute using pretrained model for the same input settings."
-	echo "-o | --outdir <string>	optional	set the path where to write the imputed matrix. Default: current working directory (pwd)."
+    help_message
     shift
-	exit
       ;;
     --) # end argument parsing
       shift
@@ -78,6 +91,7 @@ while (( "$#" )); do
       ;;
     -*|--*=) # unsupported flags
       echo "Error: Unsupported argument $1" >&2
+      help_message
       exit 1
       ;;
     *) # preserve positional arguments
@@ -88,24 +102,47 @@ while (( "$#" )); do
 done
 # set positional arguments in their proper place
 eval set -- "$PARAMS"
+# print out the help message if no option provided
+if [ -z "$PARAMS" ]
+then
+    help_message
+fi
 e_matrix=$(awk -v OFS=" "  '{print $1}' <<< $PARAMS)
 set -e
 # create a tmp folder for intermediate outputs
 #rm -r scIGANs_tmp*
 timestamp=$(date '+%Y%m%d%H%M')
-tmp='scIGANs_tmp'$timestamp
 fname=`basename $e_matrix` ## get the filename without path
-logfile="scIGANs_"$timestamp"_"$fname".log" # the log file
+if [ -z "$label" ]
+then
+	lname="noLabel"
+else
+	lname=`basename $label`
+fi
+if [ -z "$job_name" ]
+then
+job_name=$fname"_"$lname
+fi
+tmp=$outdir'/scIGANs_'$job_name'_tmp'$timestamp
+logfile=$tmp".log" # the log file
 
 mkdir -p $tmp
 echo ""
 echo $version
 echo $version >> $logfile
 echo "" >> $logfile
+python_path=python # default python
+Rscript_path=Rscript # default R
+if [ -n "$CONDA_PREFIX" ] ## check if running within a conda evn, and then use the python and R from conda env
+then
+echo "scIGANs is running in a conda environment: "$CONDA_DEFAULT_ENV
+python_path=$CONDA_PREFIX/bin/python
+Rscript_path=$CONDA_PREFIX/bin/Rscript
+fi
 echo ""
 echo "Prechecking input files..."
 echo $(date)"	Prechecking input files..." >> $logfile
-Rscript ${Bashdir}/src/inpro.R ${e_matrix} $tmp $logfile $label 2>&1 | tee -a $logfile
+$Rscript_path ${Bashdir}/src/inpro.R ${e_matrix} $tmp $logfile $label 2>&1 | tee -a $logfile
 if [ $? -ne 0 ]
 then
 	exit 1
@@ -127,14 +164,14 @@ then
 	echo ""
 	echo "Command for training:" >> $logfile
 	echo "	"--file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --batch_size=$batch_size --latent_dim=$latent_dim --threthold=$threthold --train >> $logfile
-	python ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --batch_size=$batch_size --latent_dim=$latent_dim --threthold=$threthold --train 2>&1 | tee -a $logfile
+	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --batch_size=$batch_size --latent_dim=$latent_dim --threthold=$threthold --train --job_name $job_name --outdir $outdir  #2>&1 | tee -a $logfile
 	echo "Imputing..."
 	echo "" >> $logfile
 	echo $(date)"	Imputing..." >> $logfile
 	echo ""
 	echo "Command for Imputing:" >> $logfile
 	echo "	"--file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute >> $logfile
-	python ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute 2>&1 | tee -a $logfile
+	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute --job_name $job_name --outdir $outdir #2>&1 | tee -a $logfile
 else
 	echo "Imputing..."
 	echo "" >> $logfile
@@ -142,10 +179,10 @@ else
 	echo ""
 	echo "Command for Imputing:" >> $logfile
 	echo "	"--file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute >> $logfile
-	python ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute 2>&1 | tee -a $logfile
+	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute --job_name $job_name --outdir $outdir #2>&1 | tee -a $logfile
 fi
 if [ $? -eq 0 ]
 then
-	Rscript ${Bashdir}/src/outpro.R $fname $tmp $outdir $timestamp 2>&1 | tee -a $logfile
+	$Rscript_path ${Bashdir}/src/outpro.R $job_name $tmp $outdir $timestamp 2>&1 | tee -a $logfile
 fi
 rm -r $tmp
