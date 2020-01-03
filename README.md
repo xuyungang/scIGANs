@@ -102,4 +102,4 @@ Xiaobo Zhou xiaobo.zhou@uth.tmc.edu
 ### <a name="issue"></a>Comment and bug report
 [github issues](https://github.com/xuyungang/scIGANs0.1.1/issues)
 ### <a name="cite"></a>Citation
-Yungang Xu, Zhigang Zhang, Lei You, Jiajia Liu, Xiaobo Zhou. (2019) **scIGANs: Generative adversarial networks for single-cell RNA-seq imputation.** In preparation (Coming soon on BioRxiv). 
+Yungang Xu, Zhigang Zhang, Lei You, Jiajia Liu, Zhiwei Fan, Xiaobo Zhou. (2019) **scIGANs: Generative adversarial networks for single-cell RNA-seq imputation.** In preparation (Coming soon on BioRxiv). 
