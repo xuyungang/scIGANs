@@ -83,7 +83,7 @@ scIGANs is implemented in `python` (>2.7) and `R`(>3.5). Please install `Python`
          - `-o|--outdir`    \[STR\]   Output directory. \<**optional**> Default: current working directory
 ### <a name="input"></a>Input file format
 scIGANs takes tab-delimited text file(s) as input. The expression count matrix file is required and needs to be imputed. The cell labels file is optional and contains the cell labels, each per row with the same cell order as in expression matrix file. The following shows the toy example formats.
-![input format](https://github.com/xuyungang/scIGANs_Reproducibility/blob/master/scIGANs_input.png)
+![input format](test_data/scIGANs_input.png)
 ### <a name="output"></a>Output files
 scIGANs will generate following files:
 - **`Model files:`** one file for Discriminator and one file for Generator are located in thhe folder `GANs_models/`. Files are named in the format of `\<in.matrix.txt>-<label_file_name>-\<latent_dim>-\<n_epochs>-\<cluster_number>-g.pt` or `\<in.matrix.txt>-<label_file_name>-\<latent_dim>-\<n_epochs>-\<cluster_number>-d.pt`.
