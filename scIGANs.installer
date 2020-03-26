@@ -15,6 +15,7 @@ cp -r src $path/scIGANs${version}/
 cp -r test_data $path/scIGANs${version}/
 cp scIGANs $path/scIGANs${version}/
 chmod +x $path/scIGANs${version}/scIGANs
+export ${path}/scIGANs${version}
 echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc
 $(echo source ~/.bashrc)
 
