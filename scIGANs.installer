@@ -15,10 +15,11 @@ cp -r src $path/scIGANs${version}/
 cp -r test_data $path/scIGANs${version}/
 cp scIGANs $path/scIGANs${version}/
 chmod +x $path/scIGANs${version}/scIGANs
-export PATH=${path}/scIGANs${version}/
+export PATH=${path}/scIGANs${version}/:$PATH
+echo "# added by scIGANs${version} installer" >> ~/.bashrc
+echo "# >>> scIGANs init >>>" >> ~/.bashrc
 echo "export PATH=${path}/scIGANs${version}/:$PATH" >> ~/.bashrc
-$(echo source ~/.bashrc)
-
+echo "# >>> scIGANs init >>>" >> ~/.bashrc
 echo ""
 echo 'scIGANs was installed in '${path}/scIGANs${version}/
 echo ""
