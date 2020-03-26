@@ -9,6 +9,7 @@ do
 	    ;;
 	esac
 done
+path=$(realpath $path)
 mkdir -p $path/scIGANs${version}/
 cp -r src $path/scIGANs${version}/
 cp -r test_data $path/scIGANs${version}/
