@@ -144,7 +144,7 @@ fi
 echo ""
 echo "Prechecking input files..."
 echo $(date)"	Prechecking input files..." >> $logfile
-$Rscript_path ${Bashdir}/src/inpro2.R ${e_matrix} $tmpdir $logfile $label 2>&1 | tee -a $logfile
+$Rscript_path ${Bashdir}/src/inpro.R ${e_matrix} $tmpdir $logfile $label 2>&1 | tee -a $logfile
 if [ $? -ne 0 ]
 then
 	exit 1
@@ -185,6 +185,6 @@ else
 fi
 if [ $? -eq 0 ]
 then
-	$Rscript_path ${Bashdir}/src/outpro2.R $job_name $tmpdir $outdir $timestamp 2>&1 | tee -a $logfile
+	$Rscript_path ${Bashdir}/src/outpro.R $job_name $tmpdir $outdir $timestamp 2>&1 | tee -a $logfile
 fi
 rm -r $tmpdir
