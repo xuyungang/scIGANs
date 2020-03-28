@@ -130,7 +130,7 @@ mkdir -p $tmpdir
 logfile=$tmpdir".log" 
 
 echo ""
-echo Running $version located in $Bashdir
+echo $version
 echo $version >> $logfile
 echo "" >> $logfile
 python_path=python # default python
