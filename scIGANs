@@ -1,7 +1,7 @@
 #!/bin/bash
 ## parsing the arguments
-## last update: 2019/04/28
-version="scIGANs_0.1.1_debug"
+## last update: 2020/03/28
+version="scIGANs_0.1.2"
 
 epochs=200 # number of epochs for training
 sim_size=200 # number of simulated datasets for imputation
@@ -19,7 +19,7 @@ help_message (){
 	echo $version
     echo "--------------"
     echo ""
-    echo "USAGE: scIGANs in.matrix.txt [options]"
+    echo "USAGE: scIGANs <in.matrix.txt> [-l in.label.txt] [options]"
     echo ""
     echo "in.matrix.txt A tab-delimited text file, containing the expression counts with genes in rows and cells in columns. The first row is header and first column is gene IDs or names. <required>"
 	echo "-h | --help		show this message"
@@ -38,6 +38,7 @@ help_message (){
 
 outdir=`pwd`
 Bashdir=$(dirname $BASH_SOURCE)
+
 while (( "$#" )); do
   case "$1" in
     -l|--label_file)
@@ -107,10 +108,9 @@ if [ -z "$PARAMS" ]
 then
     help_message
 fi
-e_matrix=$(awk -v OFS=" "  '{print $1}' <<< $PARAMS)
+e_matrix=$(awk -v OFS=" " '{print $1}' <<< $PARAMS)
 set -e
-# create a tmp folder for intermediate outputs
-#rm -r scIGANs_tmp*
+
 timestamp=$(date '+%Y%m%d%H%M')
 fname=`basename $e_matrix` ## get the filename without path
 if [ -z "$label" ]
@@ -123,12 +123,14 @@ if [ -z "$job_name" ]
 then
 job_name=$fname"_"$lname
 fi
-tmp=$outdir'/scIGANs_'$job_name'_tmp'$timestamp
-logfile=$tmp".log" # the log file
+# create a tmp folder for intermediate outputs
+tmpdir=$outdir'/scIGANs_'$job_name'_tmp'$timestamp
+mkdir -p $tmpdir
+# the log file
+logfile=$tmpdir".log" 
 
-mkdir -p $tmp
 echo ""
-echo $version
+echo Running $version located in $Bashdir
 echo $version >> $logfile
 echo "" >> $logfile
 python_path=python # default python
@@ -142,14 +144,14 @@ fi
 echo ""
 echo "Prechecking input files..."
 echo $(date)"	Prechecking input files..." >> $logfile
-$Rscript_path ${Bashdir}/src/inpro.R ${e_matrix} $tmp $logfile $label 2>&1 | tee -a $logfile
+$Rscript_path ${Bashdir}/src/inpro2.R ${e_matrix} $tmpdir $logfile $label 2>&1 | tee -a $logfile
 if [ $? -ne 0 ]
 then
 	exit 1
 fi
 while read line; do
 par+=($line)
-done < $tmp/args
+done < $tmpdir/args
 
 img_size=${par[0]}
 ncls=${par[1]}
@@ -163,26 +165,26 @@ then
 	echo $(date)"	Training..." >> $logfile
 	echo ""
 	echo "Command for training:" >> $logfile
-	echo "	"--file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --batch_size=$batch_size --latent_dim=$latent_dim --threthold=$threthold --train >> $logfile
-	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --batch_size=$batch_size --latent_dim=$latent_dim --threthold=$threthold --train --job_name $job_name --outdir $outdir  #2>&1 | tee -a $logfile
+	echo "	"--file_d=$tmpdir/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --batch_size=$batch_size --latent_dim=$latent_dim --threthold=$threthold --train >> $logfile
+	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmpdir/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --batch_size=$batch_size --latent_dim=$latent_dim --threthold=$threthold --train --job_name $job_name --outdir $outdir  #2>&1 | tee -a $logfile
 	echo "Imputing..."
 	echo "" >> $logfile
 	echo $(date)"	Imputing..." >> $logfile
 	echo ""
 	echo "Command for Imputing:" >> $logfile
-	echo "	"--file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute >> $logfile
-	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute --job_name $job_name --outdir $outdir #2>&1 | tee -a $logfile
+	echo "	"--file_d=$tmpdir/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute >> $logfile
+	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmpdir/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute --job_name $job_name --outdir $outdir #2>&1 | tee -a $logfile
 else
 	echo "Imputing..."
 	echo "" >> $logfile
 	echo $(date)"	Imputing..." >> $logfile
 	echo ""
 	echo "Command for Imputing:" >> $logfile
-	echo "	"--file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute >> $logfile
-	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmp/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute --job_name $job_name --outdir $outdir #2>&1 | tee -a $logfile
+	echo "	"--file_d=$tmpdir/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute >> $logfile
+	$python_path ${Bashdir}/src/imputeByGans.py --file_d=$tmpdir/${fname} --file_c=$label --ncls=$ncls --img_size=$img_size --n_epochs=$epochs --sim_size=$sim_size --knn_k=$knn_k --latent_dim=$latent_dim --impute --job_name $job_name --outdir $outdir #2>&1 | tee -a $logfile
 fi
 if [ $? -eq 0 ]
 then
-	$Rscript_path ${Bashdir}/src/outpro.R $job_name $tmp $outdir $timestamp 2>&1 | tee -a $logfile
+	$Rscript_path ${Bashdir}/src/outpro2.R $job_name $tmpdir $outdir $timestamp 2>&1 | tee -a $logfile
 fi
-rm -r $tmp
+rm -r $tmpdir
