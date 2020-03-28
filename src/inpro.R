@@ -1,29 +1,32 @@
-## last update: 2019/04/28
+## last update: 2020/03/28
 args <- commandArgs(T)
 file = args[1]
 tmp = args[2]
-label = args[4]
 logfile = args[3]
+label = args[4]
 ncls = 0 ## the number of clusters
+options("digits" = 4)
 message("Check dependent packages...")
 write(paste(date(), "\tCheck dependent packages...", sep=""), logfile, append = T)
 library(SamSPECTRAL)
 library(Rtsne)
+library(data.table)
 message("Done!")
 write(paste(date(),"\tDone!", sep=""), logfile, append = T)
 
 
-## randomly sample rows from the matrix to fill the origianl matrix to a desired row count
-upSample_random <- function(matrix, rowNum){
-  mRows <- dim(matrix)[1]
-  if(mRows>=rowNum){
-    return(matrix)
-  } else{
-    getRows = sample(1:mRows, rowNum-mRows, replace = T)
-    return(rbind(matrix,matrix[getRows,]))
-  }
-  
-}
+## (DEPRECATED) randomly sample rows from the matrix to fill the origianl matrix to a desired row count
+# upSample_random <- function(matrix, rowNum){
+#   mRows <- dim(matrix)[1]
+#   if(mRows>=rowNum){
+#     return(matrix)
+#   } else{
+#     getRows = sample(1:mRows, rowNum-mRows, replace = T)
+#     return(rbind(matrix,matrix[getRows,]))
+#   }
+#   
+# }
+
 ## fill the origianl matrix to a desired row count by zeros
 upSample_zero <- function(mtx, rowNum){
   mRows <- dim(mtx)[1]
@@ -37,24 +40,26 @@ upSample_zero <- function(mtx, rowNum){
   }
   
 }
-
-if(!file.exists(tmp)) dir.create(tmp)
+## test only-------------------------------
+# file = "ercc.txt"
+# tmp = "test.tmp"
+# label = "ercc.label.txt"
+# logfile = "test.log"
+## ---------------------------------------
+if(!file.exists(tmp)) dir.create(tmp, showWarnings = F)
 if(is.null(file) || is.na(file)){
   write("ERROR:The tab-delimited file for expression matrix is required!!!", logfile, append = T)
   stop("ERROR:The tab-delimited file for expression matrix is required!!!")
 }
-d<- read.table(file, header = T, sep = "\t")
-genenames = as.character(d[,1])
+
+
+d<- fread(file, header = T, sep = "\t")
+genenames = d[[1]]
 cellnames = colnames(d)
 d <- d[, -1]
 geneCount<-dim(d)[1] ## gene count
 cellCount<-dim(d)[2] ## cell count
 
-## check the number of rows (gene numbers)
-#fig_h<-124 ##124^=15376
-#numD <- ceiling(geneCount/fig_h^2)
-
-#gcm <- upSample_zero(d, numD*fig_h^2)
 ## upSample the matrix to rows that the sqrt of the number is >= geneCount
 #numD = 1
 fig_h = ceiling(sqrt(geneCount))
@@ -63,14 +68,14 @@ gcm <- upSample_zero(d, fig_h^2)
 #normalize data such that maximum vale for each cell equals to 1
 reads_max_cell<-apply(gcm,2,max,na.rm=T)## the max value of each column
 save(genenames, cellnames, geneCount, cellCount, reads_max_cell, file = paste(tmp,"/original.RData", sep = ""))
-gcm_n<-gcm/matrix(reads_max_cell,nrow=fig_h^2,ncol=cellCount,byrow = T)
+gcm_n <- t(gcm)/reads_max_cell
 set.seed(100)
 #process the label
 
 if(is.null(label) || is.na(label)){## if no label file provided, then run pre-cluster to generate cluster label for each cell
     message("No label file provided, generating labels...")
     write(paste(date(), "\tNo label file provided, generating labels...", sep=""), logfile, append = T)
-    pcsn <- prcomp(t(gcm_n))
+    pcsn <- prcomp(gcm_n)
     #full<-pcsn[,1:50]
     tsne3 <- Rtsne(pcsn$x, dims = 3, theta=0.2, perplexity=cellCount%/%4, verbose=TRUE, max_iter = 1000)
     full<-tsne3$Y
@@ -92,10 +97,10 @@ if(is.null(label) || is.na(label)){## if no label file provided, then run pre-cl
   cls.factor = factor(cls[,1])
   ncls = length(levels(cls.factor))
 }
-
-
-tmpfile = paste(tmp,"/",basename(file), sep = "")
-write.csv(gcm_n,tmpfile,quote=F,row.names = T)
 write(fig_h, paste(tmp,"/args",sep = ""), append =F)
 write(ncls, paste(tmp,"/args",sep = ""), append =T)
 write(label, paste(tmp,"/args",sep = ""), append =T)
+
+tmpfile = paste(tmp,"/",basename(file), sep = "")
+fwrite(as.data.table(t(gcm_n)) ,tmpfile,quote=F,row.names = T)
+
