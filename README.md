@@ -1,5 +1,6 @@
 # scIGANs (v0.1.1)
 Generative adversarial networks for single-cell RNA-seq imputation
+## Published in Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa506
 ## Table of Contents
 - [Introduction](#introduction)
 - [Installation](#install)
@@ -102,4 +103,4 @@ Xiaobo Zhou xiaobo.zhou@uth.tmc.edu
 ### <a name="issue"></a>Comment and bug report
 [github issues](https://github.com/xuyungang/scIGANs0.1.1/issues)
 ### <a name="cite"></a>Citation
-Yungang Xu, Zhigang Zhang, Lei You, Jiajia Liu, Zhiwei Fan, Xiaobo Zhou. (2019) **Single-cell RNA-seq Imputation using Generative Adversarial Networks**, BioRxiv. https://www.biorxiv.org/content/10.1101/2020.01.20.913384v3
+Yungang Xu, Zhigang Zhang, Lei You, Jiajia Liu, Zhiwei Fan, Xiaobo Zhou, scIGANs: single-cell RNA-seq imputation using generative adversarial networks, Nucleic Acids Research, 2020, gkaa506, https://doi.org/10.1093/nar/gkaa506
