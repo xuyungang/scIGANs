@@ -1,6 +1,6 @@
 # scIGANs (v0.1.1)
 Generative adversarial networks for single-cell RNA-seq imputation
-### Published in Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa506
+### Now published in Nucleic Acids Research, https://doi.org/10.1093/nar/gkaa506
 ## Table of Contents
 - [Introduction](#introduction)
 - [Installation](#install)
