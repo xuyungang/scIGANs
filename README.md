@@ -87,9 +87,9 @@ scIGANs takes tab-delimited text file(s) as input. The expression count matrix f
 ![input format](test_data/scIGANs_input.png)
 ### <a name="output"></a>Output files
 scIGANs will generate following files:
-- **`Model files:`** one file for Discriminator and one file for Generator are located in thhe folder `GANs_models/`. Files are named in the format of `\<in.matrix.txt>-<label_file_name>-\<latent_dim>-\<n_epochs>-\<cluster_number>-g.pt` or `\<in.matrix.txt>-<label_file_name>-\<latent_dim>-\<n_epochs>-\<cluster_number>-d.pt`.
-- **`Imputed matrix:`** expression matrix, with the same format as input and only has some zero-counts replaced with expression values imputed by scIGANs. File is named in the format of `scIGANs_\<timestamp>_\<in_matrix_filename>`.
-- **`Log file:`** a log file of the running, named as `scIGANs_\<timestamp>_\<in_matrix_filename>.log`.
+- **`Model files:`** one file for Discriminator and one file for Generator are located in thhe folder `GANs_models/`. Files are named in the format of `<in.matrix.txt>-<label_file_name>-<latent_dim>-<n_epochs>-<cluster_number>-g.pt` or `<in.matrix.txt>-<label_file_name>-<latent_dim>-<n_epochs>-<cluster_number>-d.pt`.
+- **`Imputed matrix:`** expression matrix, with the same format as input and only has some zero-counts replaced with expression values imputed by scIGANs. File is named in the format of `scIGANs_<timestamp>_<in_matrix_filename>`.
+- **`Log file:`** a log file of the running, named as `scIGANs_<timestamp>_<in_matrix_filename>.log`.
 
 ### <a name="test"></a>Run with test_data
 - Without label file: `scIGANs scIGNAs/install/path/test_data/ercc.txt -e 1 [options]`
