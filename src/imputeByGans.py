@@ -50,7 +50,7 @@ parser.add_argument('--threthold', type=float, default=0.01, help='the convergen
 parser.add_argument('--job_name', type=str, default="", help='the user-defined job name, which will be used to name the output files.')
 parser.add_argument('--outdir', type=str, default=".", help='the directory for output.')
 
-max_ncls=16  # 
+max_ncls = opt.ncls  # 
 
 opt = parser.parse_args()
 #opt.impute=True
